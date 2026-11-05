@@ -1,0 +1,43 @@
+# ---------------------------
+# 1. Keamanan & Rahasia (Wajib)
+# ---------------------------
+.env
+.env.*
+*.pem
+
+# ---------------------------
+# 2. Backend (Python / Flask)
+# ---------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+instance/
+.pytest_cache/
+
+# ---------------------------
+# 3. Frontend (Node / React / Bun)
+# ---------------------------
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Log error
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun.log
+
+# ---------------------------
+# 4. OS & Editor (VSCode, Mac, Windows)
+# ---------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
