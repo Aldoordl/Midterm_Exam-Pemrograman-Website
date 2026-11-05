@@ -60,8 +60,7 @@ function Home() {
                                     </div>
 
                                     {/* Tombol ke Detail */}
-                                    {/* Nanti akan kita hidupkan setelah halaman detail selesai */}
-                                    {/* <Link to={`/project/${project.slug}`} className="text-blue-600 hover:underline font-medium">Baca Studi Kasus &rarr;</Link> */}
+                                    <Link to={`/project/${project.slug}`} className="text-blue-600 hover:underline font-medium">Baca Studi Kasus &rarr;</Link>
                                 </div>
                             </div>
                         ))}
