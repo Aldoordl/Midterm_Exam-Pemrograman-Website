@@ -120,6 +120,66 @@ def get_admin_messages():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# ==========================================
+# ENDPOINT ADMIN: MANAJEMEN PROYEK (CRUD)
+# ==========================================
+
+# 1. Tambah Proyek Baru
+@app.route('/api/admin/projects', methods=['POST'])
+def create_project():
+    try:
+        data = request.json
+        
+        # Validasi dasar: pastikan judul dan slug tidak kosong
+        if not data.get('title') or not data.get('slug'):
+            return jsonify({"status": "error", "message": "Judul dan Slug wajib diisi!"}), 400
+
+        # Memasukkan data ke tabel projects
+        response = supabase.table('projects').insert(data).execute()
+        return jsonify({"status": "success", "message": "Proyek berhasil ditambahkan", "data": response.data}), 201
+        
+    except Exception as e:
+        # Menangkap error jika slug sudah ada (duplicate unique constraint)
+        if "duplicate key value" in str(e):
+            return jsonify({"status": "error", "message": "Slug URL sudah digunakan, gunakan yang lain."}), 400
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# 2. Edit / Perbarui Proyek
+@app.route('/api/admin/projects/<id>', methods=['PUT'])
+def update_project(id):
+    try:
+        data = request.json
+        
+        # Memperbarui data berdasarkan ID proyek
+        response = supabase.table('projects').update(data).eq('id', id).execute()
+        return jsonify({"status": "success", "message": "Proyek berhasil diperbarui", "data": response.data}), 200
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# 3. Hapus Proyek
+@app.route('/api/admin/projects/<id>', methods=['DELETE'])
+def delete_project(id):
+    try:
+        # Menghapus data berdasarkan ID proyek
+        response = supabase.table('projects').delete().eq('id', id).execute()
+        return jsonify({"status": "success", "message": "Proyek berhasil dihapus"}), 200
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# 4. Membaca semua proyek (termasuk draft) untuk Dashboard Admin
+@app.route('/api/admin/projects', methods=['GET'])
+def get_all_projects_admin():
+    try:
+        # Mengambil semua tanpa filter is_published
+        response = supabase.table('projects').select('*').order('created_at', desc=True).execute()
+        return jsonify({"status": "success", "data": response.data}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+        
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
