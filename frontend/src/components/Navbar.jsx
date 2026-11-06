@@ -14,7 +14,6 @@ function Navbar() {
 
     return (
         <header className="sticky top-6 z-50 w-full px-4 flex justify-center pointer-events-none">
-            {/* Centered Floating Pill Dock (Mirroring Reference Image) */}
             <nav className="pointer-events-auto bg-white/90 backdrop-blur-md border border-gray-200/80 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.06)] rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-2">
                 {/* Home */}
                 <Link

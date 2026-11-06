@@ -1,11 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ========================================================
-   MINIMALIST ARCHITECTURAL PERSONAL PORTFOLIO
-   Drafting Lines, Crosshairs & Infinite Image Marquee
-   ======================================================== */
-
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --bg-page: #fafafa;
@@ -60,6 +55,7 @@ body {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -175,7 +171,6 @@ body {
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 9999px;
-  background-color: #d1d5db;
 }
 
 /* Polaroid style photo */
@@ -197,13 +192,16 @@ body {
 ::-webkit-scrollbar {
   width: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #e5e7eb;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }

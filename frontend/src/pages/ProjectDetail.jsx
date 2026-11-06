@@ -164,9 +164,9 @@ Outcome & Impact:
                     {project.image_url && (
                         <div className="browser-window">
                             <div className="browser-header">
-                                <div className="browser-dot"></div>
-                                <div className="browser-dot"></div>
-                                <div className="browser-dot"></div>
+                                <div className="browser-dot bg-red-500"></div>
+                                <div className="browser-dot bg-yellow-400"></div>
+                                <div className="browser-dot bg-green-500"></div>
                             </div>
                             <div className="overflow-hidden bg-gray-50">
                                 <img

@@ -194,9 +194,9 @@ function Home() {
                             >
                                 <div className="browser-header py-1.5 px-3">
                                     <div className="flex items-center gap-1">
-                                        <div className="browser-dot"></div>
-                                        <div className="browser-dot"></div>
-                                        <div className="browser-dot"></div>
+                                        <div className="browser-dot bg-red-500"></div>
+                                        <div className="browser-dot bg-yellow-400"></div>
+                                        <div className="browser-dot bg-green-500"></div>
                                     </div>
                                 </div>
                                 <div className="w-full h-full overflow-hidden">
@@ -311,9 +311,9 @@ function Home() {
                                         <div className="browser-window">
                                             <div className="browser-header justify-between">
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className="browser-dot"></div>
-                                                    <div className="browser-dot"></div>
-                                                    <div className="browser-dot"></div>
+                                                    <div className="browser-dot bg-red-500"></div>
+                                                    <div className="browser-dot bg-yellow-400"></div>
+                                                    <div className="browser-dot bg-green-500"></div>
                                                 </div>
                                                 <span className="text-[10px] text-gray-400 font-mono">
                                                     {proj.slug ? `${proj.slug}.app` : 'project.app'}
