@@ -25,7 +25,6 @@ function ProjectDetail() {
                 setIsLoading(false);
             })
             .catch(() => {
-                // Fallback project details
                 setProject({
                     title: 'Discover The Beauty Of Nature',
                     slug: slug,
@@ -53,134 +52,147 @@ Outcome & Impact:
 
     if (isLoading) {
         return (
-            <div className="portfolio-container py-24 text-center">
-                <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-3"></div>
-                <p className="text-xs text-gray-400 font-mono">Loading project details...</p>
+            <div className="py-12">
+                <div className="architect-frame py-24 text-center">
+                    <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-3"></div>
+                    <p className="text-xs text-gray-400 font-mono">Loading project data...</p>
+                </div>
             </div>
         );
     }
 
     if (error && !project) {
         return (
-            <div className="portfolio-container py-20 text-center space-y-4">
-                <h2 className="text-xl font-bold text-gray-900">Project Not Found</h2>
-                <p className="text-xs text-gray-500">{error || "The project you're looking for does not exist."}</p>
-                <div>
-                    <Link to="/" className="btn-secondary text-xs">
-                        ← Back to Portfolio
-                    </Link>
+            <div className="py-12">
+                <div className="architect-frame py-20 text-center space-y-4">
+                    <h2 className="text-xl font-bold text-gray-900">Project Not Found</h2>
+                    <p className="text-xs text-gray-500">{error || "The project you're looking for does not exist."}</p>
+                    <div>
+                        <Link to="/" className="btn-secondary text-xs">
+                            ← Back to Portfolio
+                        </Link>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="portfolio-container py-10 space-y-8">
-            {/* Back Button */}
-            <div>
-                <Link
-                    to="/"
-                    className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-black transition-colors"
-                >
-                    <span>← Back to all projects</span>
-                </Link>
-            </div>
+        <div className="py-6">
+            <div className="architect-frame">
+                {/* Corner crosshairs (+) */}
+                <span className="crosshair -top-1.75 -left-1.75">+</span>
+                <span className="crosshair -top-1.75 -right-1.75">+</span>
+                <span className="crosshair -bottom-1.75 -left-1.75">+</span>
+                <span className="crosshair -bottom-1.75 -right-1.75">+</span>
 
-            {/* Title & Metadata */}
-            <div className="space-y-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-                    {project.title}
-                </h1>
+                {/* Top Architectural Measurement Line */}
+                <div className="relative border-b border-gray-100 px-6 py-2 flex items-center justify-between text-[10px] text-gray-400 font-mono select-none">
+                    <Link to="/" className="hover:text-black transition-colors">
+                        ← BACK TO PORTFOLIO
+                    </Link>
+                    <span className="tracking-widest">DOC // {project.slug || 'CASE-STUDY'}</span>
+                    <span>DETAIL VIEW</span>
+                    <span className="crosshair -bottom-1.75 -left-1.75">+</span>
+                    <span className="crosshair -bottom-1.75 -right-1.75">+</span>
+                </div>
 
-                {project.short_description && (
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                        {project.short_description}
-                    </p>
-                )}
+                <div className="portfolio-container py-10 space-y-8">
+                    {/* Title & Metadata */}
+                    <div className="space-y-3">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                            {project.title}
+                        </h1>
 
-                {/* Tech Pills & Date */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <div className="flex flex-wrap gap-1.5">
-                        {project.tech_stack && project.tech_stack.map((tech, index) => (
-                            <span
-                                key={index}
-                                className="text-[10px] font-medium bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md"
-                            >
-                                {tech}
-                            </span>
-                        ))}
+                        {project.short_description && (
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                {project.short_description}
+                            </p>
+                        )}
+
+                        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                            <div className="flex flex-wrap gap-1.5">
+                                {project.tech_stack && project.tech_stack.map((tech, index) => (
+                                    <span
+                                        key={index}
+                                        className="text-[10px] font-medium bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md"
+                                    >
+                                        {tech}
+                                    </span>
+                                ))}
+                            </div>
+
+                            {project.created_at && (
+                                <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono">
+                                    <IconClock className="w-3.5 h-3.5" />
+                                    <span>{new Date(project.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {(project.github_url || project.live_url) && (
+                            <div className="flex flex-wrap gap-2.5 pt-3">
+                                {project.github_url && (
+                                    <a
+                                        href={project.github_url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="btn-secondary text-xs"
+                                    >
+                                        <IconGithub className="w-3.5 h-3.5" />
+                                        <span>GitHub Repository</span>
+                                        <IconArrowUpRight className="w-3 h-3 text-gray-400" />
+                                    </a>
+                                )}
+                                {project.live_url && (
+                                    <a
+                                        href={project.live_url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="btn-primary text-xs"
+                                    >
+                                        <IconExternalLink className="w-3.5 h-3.5" />
+                                        <span>Visit Live Demo</span>
+                                        <IconArrowUpRight className="w-3 h-3" />
+                                    </a>
+                                )}
+                            </div>
+                        )}
                     </div>
 
-                    {project.created_at && (
-                        <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono">
-                            <IconClock className="w-3.5 h-3.5" />
-                            <span>{new Date(project.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</span>
+                    {/* Image Preview Window */}
+                    {project.image_url && (
+                        <div className="browser-window">
+                            <div className="browser-header">
+                                <div className="browser-dot"></div>
+                                <div className="browser-dot"></div>
+                                <div className="browser-dot"></div>
+                            </div>
+                            <div className="overflow-hidden bg-gray-50">
+                                <img
+                                    src={project.image_url}
+                                    alt={project.title}
+                                    className="w-full h-auto object-cover max-h-115"
+                                />
+                            </div>
                         </div>
                     )}
-                </div>
 
-                {/* Action Links */}
-                {(project.github_url || project.live_url) && (
-                    <div className="flex flex-wrap gap-2.5 pt-3">
-                        {project.github_url && (
-                            <a
-                                href={project.github_url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="btn-secondary text-xs"
-                            >
-                                <IconGithub className="w-3.5 h-3.5" />
-                                <span>GitHub Repository</span>
-                                <IconArrowUpRight className="w-3 h-3 text-gray-400" />
-                            </a>
-                        )}
-                        {project.live_url && (
-                            <a
-                                href={project.live_url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="btn-primary text-xs"
-                            >
-                                <IconExternalLink className="w-3.5 h-3.5" />
-                                <span>Visit Live Demo</span>
-                                <IconArrowUpRight className="w-3 h-3" />
-                            </a>
-                        )}
+                    {/* Content Body */}
+                    <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap pt-4 border-t border-gray-100">
+                        {project.content}
                     </div>
-                )}
-            </div>
 
-            {/* Image Preview Window */}
-            {project.image_url && (
-                <div className="browser-window">
-                    <div className="browser-header">
-                        <div className="browser-dot"></div>
-                        <div className="browser-dot"></div>
-                        <div className="browser-dot"></div>
-                    </div>
-                    <div className="overflow-hidden bg-gray-50">
-                        <img
-                            src={project.image_url}
-                            alt={project.title}
-                            className="w-full h-auto object-cover max-h-[460px]"
-                        />
+                    {/* Bottom Nav */}
+                    <div className="pt-8 border-t border-gray-100 flex items-center justify-between">
+                        <Link to="/" className="btn-secondary text-xs">
+                            ← Back to Home
+                        </Link>
+                        <Link to="/contact" className="btn-primary text-xs">
+                            Get In Touch
+                        </Link>
                     </div>
                 </div>
-            )}
-
-            {/* Content Body */}
-            <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap pt-4 border-t border-gray-100">
-                {project.content}
-            </div>
-
-            {/* Bottom Navigation */}
-            <div className="pt-8 border-t border-gray-100 flex items-center justify-between">
-                <Link to="/" className="btn-secondary text-xs">
-                    ← Back to Home
-                </Link>
-                <Link to="/contact" className="btn-primary text-xs">
-                    Get In Touch
-                </Link>
             </div>
         </div>
     );

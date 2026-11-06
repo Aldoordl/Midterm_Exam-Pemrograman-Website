@@ -19,13 +19,34 @@ function Navbar() {
                 {/* Home */}
                 <Link
                     to="/"
-                    className={`p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors ${
-                        isActive('/') ? 'text-black bg-gray-100' : ''
-                    }`}
+                    className={`p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors ${isActive('/') ? 'text-black bg-gray-100' : ''
+                        }`}
                     title="Home"
                 >
                     <IconHome className="w-4 h-4" />
                 </Link>
+
+                {/* Projects Anchor Link */}
+                <a
+                    href="/#projects"
+                    className="p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors"
+                    title="Projects"
+                >
+                    <IconFolder className="w-4 h-4" />
+                </a>
+
+                {/* Contact Page Link */}
+                <Link
+                    to="/contact"
+                    className={`p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors ${isActive('/contact') ? 'text-black bg-gray-100' : ''
+                        }`}
+                    title="Contact"
+                >
+                    <IconMail className="w-4 h-4" />
+                </Link>
+
+                {/* Vertical Divider */}
+                <div className="h-4 w-px bg-gray-200 mx-1"></div>
 
                 {/* X / Twitter */}
                 <a
@@ -48,26 +69,6 @@ function Navbar() {
                 >
                     <IconGithub className="w-4 h-4" />
                 </a>
-
-                {/* Projects Anchor Link */}
-                <a
-                    href="#projects"
-                    className="p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors"
-                    title="Projects"
-                >
-                    <IconFolder className="w-4 h-4" />
-                </a>
-
-                {/* Contact Page Link */}
-                <Link
-                    to="/contact"
-                    className={`p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors ${
-                        isActive('/contact') ? 'text-black bg-gray-100' : ''
-                    }`}
-                    title="Contact"
-                >
-                    <IconMail className="w-4 h-4" />
-                </Link>
 
                 {/* Vertical Divider */}
                 <div className="h-4 w-px bg-gray-200 mx-1"></div>

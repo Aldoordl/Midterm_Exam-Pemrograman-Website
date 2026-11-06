@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -11,7 +12,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 function App() {
   return (
     <BrowserRouter>
-      <div id="top" className="min-h-screen bg-white text-gray-900 selection:bg-gray-900 selection:text-white flex flex-col justify-between">
+      <ScrollToTop />
+      <div id="top" className="min-h-screen bg-[#fafafa] text-gray-900 selection:bg-gray-900 selection:text-white flex flex-col justify-between">
         <Navbar />
         <main className="flex-1">
           <Routes>

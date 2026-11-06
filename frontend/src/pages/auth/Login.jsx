@@ -1,9 +1,16 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { IconShieldCheck, IconArrowUpRight } from '../../components/Icons';
 
 function Login() {
+    const token = localStorage.getItem('admin_token');
+
+    // Jika sudah login, redirect langsung ke admin dashboard
+    if (token) {
+        return <Navigate to="/admin/dashboard" replace />;
+    }
+
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -41,20 +48,35 @@ function Login() {
     };
 
     return (
-        <div className="portfolio-container min-h-[70vh] flex items-center justify-center py-16">
-            <div className="w-full max-w-sm space-y-6">
-                {/* Header */}
-                <div className="text-center space-y-1">
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-                        Admin Login
-                    </h1>
-                    <p className="text-xs text-gray-500">
-                        Sign in to manage projects and read visitor inquiries.
-                    </p>
+        <div className="py-12">
+            <div className="architect-frame max-w-md">
+                {/* Corner crosshairs (+) */}
+                <span className="crosshair -top-1.75 -left-1.75">+</span>
+                <span className="crosshair -top-1.75 -right-1.75">+</span>
+                <span className="crosshair -bottom-1.75 -left-1.75">+</span>
+                <span className="crosshair -bottom-1.75 -right-1.75">+</span>
+
+                {/* Top Architectural Drafting Scale */}
+                <div className="relative border-b border-gray-100 px-6 py-2 flex items-center justify-between text-[10px] text-gray-400 font-mono select-none">
+                    <Link to="/" className="hover:text-black transition-colors">
+                        ← PORTFOLIO
+                    </Link>
+                    <span className="tracking-widest">AUTH // PORTAL</span>
+                    <span>SECURE</span>
+                    <span className="crosshair -bottom-1.75 -left-1.75">+</span>
+                    <span className="crosshair -bottom-1.75 -right-1.75">+</span>
                 </div>
 
-                {/* Form Card */}
-                <div className="p-6 rounded-2xl border border-gray-200 bg-white shadow-sm space-y-4">
+                <div className="p-8 sm:p-10 space-y-6">
+                    <div className="text-center space-y-1">
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                            Admin Login
+                        </h1>
+                        <p className="text-xs text-gray-500">
+                            Sign in to manage projects and read visitor inquiries.
+                        </p>
+                    </div>
+
                     {error && (
                         <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl flex items-center gap-2">
                             <IconShieldCheck className="w-4 h-4 text-red-600 shrink-0" />
@@ -115,3 +137,4 @@ function Login() {
 }
 
 export default Login;
+
