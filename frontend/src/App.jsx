@@ -1,31 +1,33 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProjectDetail from './pages/ProjectDetail';
 import Contact from './pages/Contact';
-import Login from './pages/Login';
-import ProtectedRoute from './components/ProtectedRoute'; // Import Proteksi
-import AdminDashboard from './pages/AdminDashboard';   // Import Dashboard
+import Login from './pages/auth/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+      <div id="top" className="min-h-screen bg-white text-gray-900 selection:bg-gray-900 selection:text-white flex flex-col justify-between">
         <Navbar />
-        <main className="max-w-5xl mx-auto px-4 py-8">
+        <main className="flex-1">
           <Routes>
-            {/* Rute Publik */}
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/project/:slug" element={<ProjectDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
 
-            {/* Rute Khusus Admin (Terproteksi) */}
+            {/* Protected Admin Route */}
             <Route element={<ProtectedRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
             </Route>
           </Routes>
         </main>
+        <Footer />
       </div>
     </BrowserRouter>
   );
