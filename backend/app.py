@@ -67,6 +67,20 @@ def send_message():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# 4. Mengambil Data Profil (Untuk halaman Beranda)
+@app.route('/api/profile', methods=['GET'])
+def get_profile():
+    try:
+        # Selalu mengambil baris dengan ID = 1
+        response = supabase.table('profiles').select('*').eq('id', 1).execute()
+        
+        if len(response.data) == 0:
+            return jsonify({"status": "error", "message": "Data profil belum ada"}), 404
+            
+        return jsonify({"status": "success", "data": response.data[0]}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 # ==========================================
 # ENDPOINT ADMIN (Butuh Autentikasi)
 # ==========================================
@@ -179,7 +193,23 @@ def get_all_projects_admin():
         return jsonify({"status": "success", "data": response.data}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+# 5. Memperbarui Data Profil
+@app.route('/api/admin/profile', methods=['POST'])
+def update_profile():
+    try:
+        data = request.json
         
+        # Memaksa ID menjadi 1 agar selalu menimpa/memperbarui baris yang sama (bukan menambah baris baru)
+        data['id'] = 1
+        
+        # Upsert: Jika ID 1 ada, perbarui. Jika tidak ada, buat baru.
+        response = supabase.table('profiles').upsert(data).execute()
+        
+        return jsonify({"status": "success", "message": "Profil berhasil diperbarui", "data": response.data}), 200
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500        
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
