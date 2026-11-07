@@ -10,7 +10,10 @@ import {
     IconServer,
     IconLayers,
     IconMail,
-    IconDownload
+    IconDownload,
+    IconAcademic,
+    IconBriefcase,
+    IconAward
 } from '../components/Icons';
 import heroImg from '../assets/hero.png';
 
@@ -18,6 +21,7 @@ function Home() {
     const [projects, setProjects] = useState([]);
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [activeExpTab, setActiveExpTab] = useState('education');
 
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/api/projects')
@@ -97,24 +101,100 @@ function Home() {
         'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&auto=format&fit=crop&q=80'
     ];
 
-    const workExperience = [
+    const educationList = [
+        {
+            period: '2022 - Present',
+            institution: 'Universitas Amikom Yogyakarta',
+            degree: 'S1 - Informatika / Computer Science',
+            description: 'Fokus pada Rekayasa Perangkat Lunak Web, Sistem Basis Data Relasional, RESTful APIs, dan Arsitektur Antarmuka Modern.',
+            badge: 'IPK 3.8+',
+            badgeBg: 'bg-emerald-50 text-emerald-700'
+        },
+        {
+            period: '2019 - 2022',
+            institution: 'SMA / SMK Negeri',
+            degree: 'MIPA / Rekayasa Perangkat Lunak',
+            description: 'Mempelajari dasar-dasar logika algoritma, pemrograman dasar, serta matematika diskrit dan komputasi.',
+            badge: 'Alumni',
+            badgeBg: 'bg-gray-100 text-gray-700'
+        }
+    ];
+
+    const worksList = [
         {
             period: '2024 - Present',
             role: 'Lead Developer & Architect',
             company: 'Aura Systems',
+            description: 'Memimpin perancangan arsitektur antarmuka, pembuatan design tokens, dan optimasi performa web aplikasi klien.',
+            badge: 'Work',
             badgeBg: 'bg-blue-50 text-blue-700'
         },
         {
             period: '2023 - 2024',
             role: 'Fullstack Engineer Intern',
             company: 'Tech Studio',
-            badgeBg: 'bg-gray-100 text-gray-800'
+            description: 'Mengembangkan endpoint REST API dengan Flask & PostgreSQL serta membangun antarmuka web interaktif dengan React.',
+            badge: 'Internship',
+            badgeBg: 'bg-emerald-50 text-emerald-700'
         },
         {
             period: '2022 - 2023',
             role: 'Frontend Specialist',
             company: 'Campus Lab',
+            description: 'Membangun komponen web modern untuk sistem informasi riset internal dan portal pendaftaran kegiatan mahasiswa.',
+            badge: 'Freelance',
+            badgeBg: 'bg-purple-50 text-purple-700'
+        },
+        {
+            period: '2023 - Present',
+            role: 'Staff Divisi Web & Teknologi',
+            company: 'Himpunan Mahasiswa Informatika',
+            description: 'Mengelola pemeliharaan portal digital mahasiswa, repositori komunitas kampus, serta mentoring sesi workshop web dasar.',
+            badge: 'Organization',
+            badgeBg: 'bg-indigo-50 text-indigo-700'
+        },
+        {
+            period: '2023 - 2024',
+            role: 'Core Member - Web Track',
+            company: 'Google Developer Student Clubs (GDSC)',
+            description: 'Mengikuti riset kolaboratif teknologi web modern, studi kasus React ecosystem, dan integrasi cloud services.',
+            badge: 'Community',
+            badgeBg: 'bg-amber-50 text-amber-700'
+        },
+        {
+            period: '2023',
+            role: 'Koordinator Perlengkapan & IT',
+            company: 'National Tech Seminar & Expo',
+            description: 'Memimpin tim teknis dalam infrastruktur sistem registrasi online dan kelancaran multimedia acara.',
+            badge: 'Committee',
+            badgeBg: 'bg-rose-50 text-rose-700'
+        }
+    ];
+
+    const certificationList = [
+        {
+            period: '2024',
+            title: 'Menjadi React Web Developer Expert',
+            issuer: 'Dicoding Indonesia',
+            description: 'Mendalami arsitektur React modern, custom hooks, global state management, dan automated unit & integration testing.',
+            badge: 'Verified',
             badgeBg: 'bg-emerald-50 text-emerald-700'
+        },
+        {
+            period: '2024',
+            title: 'Cloud Practitioner & Back-End Architecture',
+            issuer: 'AWS Academy / Dicoding',
+            description: 'Prinsip cloud computing, serverless functions, database hosting, IAM role security, dan dasar-dasar deployment.',
+            badge: 'Credential',
+            badgeBg: 'bg-blue-50 text-blue-700'
+        },
+        {
+            period: '2023',
+            title: 'Relational Database & SQL Specialist',
+            issuer: 'Oracle Academy',
+            description: 'Perancangan skema database terintegrasi, teknik normalisasi 1NF-3NF, indexing query, dan transaksi data ACID.',
+            badge: 'Certified',
+            badgeBg: 'bg-gray-100 text-gray-700'
         }
     ];
 
@@ -279,31 +359,144 @@ function Home() {
                     <span className="crosshair -bottom-1.75 -right-1.75">+</span>
                 </div>
 
-                {/* 4. WORK EXPERIENCE TIMELINE */}
+                {/* 4. JOURNEY & BACKGROUND (TABBED: EDUCATION, WORKS & ACTIVITIES, CERTIFICATES) */}
                 <div className="relative border-b border-gray-100">
                     <div className="portfolio-container py-12 space-y-6">
-                        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Work Experience</h2>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                                Journey &amp; Background
+                            </h2>
 
-                        <div className="space-y-4">
-                            {workExperience.map((exp, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-gray-100 last:border-b-0 gap-2"
+                            {/* Tab Switcher */}
+                            <div className="flex items-center gap-1 p-1 bg-gray-100 border border-gray-200/80 rounded-xl w-fit">
+                                <button
+                                    onClick={() => setActiveExpTab('education')}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${activeExpTab === 'education'
+                                        ? 'bg-white text-gray-900 shadow-xs'
+                                        : 'text-gray-500 hover:text-gray-900'
+                                        }`}
                                 >
-                                    <span className="text-xs text-gray-400 font-mono w-36">
-                                        {exp.period}
-                                    </span>
-                                    <div className="flex-1 flex items-center justify-between">
-                                        <span className="text-sm font-semibold text-gray-800">
-                                            {exp.role}
-                                        </span>
-                                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${exp.badgeBg}`}>
-                                            {exp.company}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                                    <IconAcademic className="w-3.5 h-3.5" />
+                                    <span>Education</span>
+                                </button>
+                                <button
+                                    onClick={() => setActiveExpTab('works')}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${activeExpTab === 'works'
+                                        ? 'bg-white text-gray-900 shadow-xs'
+                                        : 'text-gray-500 hover:text-gray-900'
+                                        }`}
+                                >
+                                    <IconBriefcase className="w-3.5 h-3.5" />
+                                    <span>Works</span>
+                                </button>
+                                <button
+                                    onClick={() => setActiveExpTab('certifications')}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${activeExpTab === 'certifications'
+                                        ? 'bg-white text-gray-900 shadow-xs'
+                                        : 'text-gray-500 hover:text-gray-900'
+                                        }`}
+                                >
+                                    <IconAward className="w-3.5 h-3.5" />
+                                    <span>Certificates</span>
+                                </button>
+                            </div>
                         </div>
+
+                        {/* Tab 1: Education */}
+                        {activeExpTab === 'education' && (
+                            <div className="space-y-3">
+                                {educationList.map((item, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="p-4 rounded-xl border border-gray-200/80 bg-white hover:border-gray-300 transition-colors space-y-1.5"
+                                    >
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-gray-900">
+                                                    {item.institution}
+                                                </span>
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.badgeBg}`}>
+                                                    {item.badge}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs text-gray-400 font-mono">
+                                                {item.period}
+                                            </span>
+                                        </div>
+                                        <div className="text-xs font-semibold text-gray-700">
+                                            {item.degree}
+                                        </div>
+                                        <p className="text-xs text-gray-500 leading-relaxed">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Tab 2: Works & Activities (Work + Organizations) */}
+                        {activeExpTab === 'works' && (
+                            <div className="space-y-3">
+                                {worksList.map((item, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="p-4 rounded-xl border border-gray-200/80 bg-white hover:border-gray-300 transition-colors space-y-1.5"
+                                    >
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-gray-900">
+                                                    {item.company}
+                                                </span>
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.badgeBg}`}>
+                                                    {item.badge}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs text-gray-400 font-mono">
+                                                {item.period}
+                                            </span>
+                                        </div>
+                                        <div className="text-xs font-semibold text-gray-700">
+                                            {item.role}
+                                        </div>
+                                        <p className="text-xs text-gray-500 leading-relaxed">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Tab 3: Certificates */}
+                        {activeExpTab === 'certifications' && (
+                            <div className="space-y-3">
+                                {certificationList.map((item, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="p-4 rounded-xl border border-gray-200/80 bg-white hover:border-gray-300 transition-colors space-y-1.5"
+                                    >
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-gray-900">
+                                                    {item.title}
+                                                </span>
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.badgeBg}`}>
+                                                    {item.badge}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs text-gray-400 font-mono">
+                                                {item.period}
+                                            </span>
+                                        </div>
+                                        <div className="text-xs font-semibold text-gray-700">
+                                            Issued by {item.issuer}
+                                        </div>
+                                        <p className="text-xs text-gray-500 leading-relaxed">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <span className="crosshair -bottom-1.75 -left-1.75">+</span>
                     <span className="crosshair -bottom-1.75 -right-1.75">+</span>
