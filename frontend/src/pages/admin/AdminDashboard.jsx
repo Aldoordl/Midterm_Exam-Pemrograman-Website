@@ -54,11 +54,11 @@ function AdminDashboard() {
         setIsLoading(true);
         try {
             const [msgRes, projRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_API_URL}/api/admin/messages`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
+                axios.get(`${import.meta.env.BE_API_URL}/api/admin/messages`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
                     console.error("Gagal mengambil pesan:", err);
                     return { data: { status: 'error', data: [] } };
                 }),
-                axios.get(`${import.meta.env.VITE_API_URL}/api/admin/projects`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
+                axios.get(`${import.meta.env.BE_API_URL}/api/admin/projects`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
                     console.error("Gagal mengambil proyek:", err);
                     return { data: { status: 'error', data: [] } };
                 })
@@ -74,7 +74,7 @@ function AdminDashboard() {
 
     const fetchProfile = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profile`);
+            const res = await axios.get(`${import.meta.env.BE_API_URL}/api/profile`);
             if (res.data && res.data.status === 'success' && res.data.data) {
                 setProfileForm({
                     full_name: res.data.data.full_name || '',
@@ -107,7 +107,7 @@ function AdminDashboard() {
                 resume_url: profileForm.resume_url,
                 avatar_url: profileForm.avatar_url
             };
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/profile`, payload, {
+            const response = await axios.post(`${import.meta.env.BE_API_URL}/api/admin/profile`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -169,14 +169,14 @@ function AdminDashboard() {
             };
 
             if (isEditing) {
-                const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/projects/${editId}`, payload, {
+                const response = await axios.put(`${import.meta.env.BE_API_URL}/api/admin/projects/${editId}`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (response.data.status === 'success') {
                     alert("Proyek berhasil diperbarui.");
                 }
             } else {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/projects`, payload, {
+                const response = await axios.post(`${import.meta.env.BE_API_URL}/api/admin/projects`, payload, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (response.data.status === 'success') {
@@ -194,7 +194,7 @@ function AdminDashboard() {
     const handleDeleteProject = async (id) => {
         if (!window.confirm("Hapus proyek ini?")) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/projects/${id}`, {
+            await axios.delete(`${import.meta.env.BE_API_URL}/api/admin/projects/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
