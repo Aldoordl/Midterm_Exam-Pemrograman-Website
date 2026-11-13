@@ -27,7 +27,7 @@ function Contact() {
         setStatus({ type: '', message: '' });
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/api/messages', formData);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, formData);
 
             if (response.data && response.data.status === 'success') {
                 setStatus({ type: 'success', message: 'Your message has been sent successfully! I will reply soon.' });
@@ -99,8 +99,8 @@ function Contact() {
 
                         {status.message && (
                             <div className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${status.type === 'success'
-                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                    : 'bg-red-50 text-red-800 border border-red-200'
+                                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                : 'bg-red-50 text-red-800 border border-red-200'
                                 }`}>
                                 <IconCheck className="w-4 h-4 text-emerald-600" />
                                 <span>{status.message}</span>

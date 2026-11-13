@@ -24,7 +24,7 @@ function Home() {
     const [activeExpTab, setActiveExpTab] = useState('education');
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:5000/api/projects')
+        axios.get(`${import.meta.env.VITE_API_URL}/api/projects`)
             .then((res) => {
                 if (res.data && res.data.status === 'success') {
                     setProjects(res.data.data);
@@ -35,7 +35,7 @@ function Home() {
                 setIsLoading(false);
             });
 
-        axios.get('http://127.0.0.1:5000/api/profile')
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profile`)
             .then((res) => {
                 if (res.data && res.data.status === 'success') {
                     setProfile(res.data.data);
