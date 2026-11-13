@@ -15,7 +15,7 @@ function ProjectDetail() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/api/projects/${slug}`)
+        axios.get(`${import.meta.env.BE_API_URL}/api/projects/${slug}`)
             .then((response) => {
                 if (response.data && response.data.status === 'success') {
                     setProject(response.data.data);

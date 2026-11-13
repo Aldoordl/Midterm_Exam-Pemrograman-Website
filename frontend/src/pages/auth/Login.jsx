@@ -27,7 +27,7 @@ function Login() {
         setError('');
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, credentials);
+            const response = await axios.post(`${import.meta.env.BE_API_URL}/api/login`, credentials);
 
             if (response.data && response.data.status === 'success') {
                 localStorage.setItem('admin_token', response.data.token);
