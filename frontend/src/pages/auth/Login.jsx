@@ -27,11 +27,11 @@ function Login() {
         setError('');
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/api/auth/login', credentials);
+            const response = await axios.post('http://127.0.0.1:5000/api/login', credentials);
 
             if (response.data && response.data.status === 'success') {
-                localStorage.setItem('admin_token', response.data.data.session.access_token);
-                localStorage.setItem('admin_user', JSON.stringify(response.data.data.user));
+                localStorage.setItem('admin_token', response.data.token);
+                localStorage.setItem('admin_user', JSON.stringify({ email: credentials.email }));
                 navigate('/admin/dashboard');
             } else {
                 setError(response.data ? response.data.message : 'Invalid login credentials.');
