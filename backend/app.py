@@ -12,7 +12,8 @@ from flasgger import Swagger
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+CORS(app, origins=[FRONTEND_URL])
 
 # ==========================================
 # KONFIGURASI UMUM
