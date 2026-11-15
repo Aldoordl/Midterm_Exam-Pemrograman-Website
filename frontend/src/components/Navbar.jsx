@@ -69,18 +69,6 @@ function Navbar() {
                     <IconGithub className="w-4 h-4" />
                 </a>
 
-                {/* Vertical Divider */}
-                <div className="h-4 w-px bg-gray-200 mx-1"></div>
-
-                {/* Admin Portal */}
-                <Link
-                    to="/login"
-                    className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                    title="Admin"
-                >
-                    <IconShieldCheck className="w-3.5 h-3.5" />
-                </Link>
-
                 {/* Primary Button "Book a Call" */}
                 <Link
                     to="/contact"

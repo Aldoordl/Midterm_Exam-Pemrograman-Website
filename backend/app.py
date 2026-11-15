@@ -12,12 +12,13 @@ from flasgger import Swagger
 load_dotenv()
 
 app = Flask(__name__)
-FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
-CORS(app, origins=[FRONTEND_URL])
 
 # ==========================================
 # KONFIGURASI UMUM
 # ==========================================
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+CORS(app, origins=[FRONTEND_URL])
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
@@ -441,12 +442,6 @@ class AdminResumeDetail(Resource):
 # ==========================================
 # REGISTRASI ROUTING API
 # ==========================================
-
-# Untuk sementara index diarahkan ke apidocs (Swagger)
-@app.route('/')
-def index():
-    return redirect('/apidocs')
-
 # Auth
 api.add_resource(AuthLogin, '/api/login')
 
