@@ -11,6 +11,9 @@ function Login() {
         return <Navigate to="/admin/dashboard" replace />;
     }
 
+    const searchParams = new URLSearchParams(window.location.search);
+    const isSessionExpired = searchParams.get('expired') === 'true';
+
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +79,13 @@ function Login() {
                             Sign in to manage projects and read visitor inquiries.
                         </p>
                     </div>
+
+                    {isSessionExpired && !error && (
+                        <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium rounded-xl flex items-center gap-2">
+                            <IconShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                            <span>Sesi login Anda telah berakhir. Silakan login kembali.</span>
+                        </div>
+                    )}
 
                     {error && (
                         <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl flex items-center gap-2">
