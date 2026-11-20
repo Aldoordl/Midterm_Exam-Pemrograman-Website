@@ -27,7 +27,11 @@ function Contact() {
         setStatus({ type: '', message: '' });
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, formData);
+            const payload = {
+                ...formData,
+                is_read: false
+            };
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, payload);
 
             if (response.data && response.data.status === 'success') {
                 setStatus({ type: 'success', message: 'Your message has been sent successfully! I will reply soon.' });

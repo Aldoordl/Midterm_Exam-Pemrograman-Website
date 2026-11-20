@@ -73,6 +73,8 @@ function AdminDashboard() {
         navigate('/login');
     };
 
+    const unreadMessagesCount = messages.filter(m => m.is_read !== true).length;
+
     return (
         <div className="py-6">
             <div className="architect-frame">
@@ -117,7 +119,14 @@ function AdminDashboard() {
                         </div>
                         <div className="p-4 rounded-xl border border-gray-200 bg-white">
                             <div className="text-[10px] text-gray-400 font-mono">MESSAGES</div>
-                            <div className="text-xl font-bold text-gray-900 mt-1">{messages.length}</div>
+                            <div className="flex items-baseline gap-2 mt-1">
+                                <div className="text-xl font-bold text-gray-900">{messages.length}</div>
+                                {unreadMessagesCount > 0 && (
+                                    <span className="text-[11px] text-gray-500 font-mono">
+                                        ({unreadMessagesCount} unread)
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -152,12 +161,19 @@ function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('messages')}
-                            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${activeTab === 'messages'
+                            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeTab === 'messages'
                                 ? 'bg-[#111827] text-white'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
-                            Messages
+                            <span>Messages</span>
+                            {unreadMessagesCount > 0 && (
+                                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
+                                    activeTab === 'messages' ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'
+                                }`}>
+                                    {unreadMessagesCount}
+                                </span>
+                            )}
                         </button>
                     </div>
 
@@ -187,7 +203,11 @@ function AdminDashboard() {
                     )}
 
                     {activeTab === 'messages' && (
-                        <MessagesTab messages={messages} />
+                        <MessagesTab
+                            messages={messages}
+                            token={token}
+                            onRefresh={fetchData}
+                        />
                     )}
                 </div>
             </div>

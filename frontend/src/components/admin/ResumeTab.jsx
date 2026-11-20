@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { IconEdit, IconTrash, IconCheck, IconAlertCircle, IconBriefcase } from '../Icons';
+import ConfirmModal from '../ConfirmModal';
 
 function ResumeTab({ resumeItems, token, onRefresh }) {
     const [isEditingResume, setIsEditingResume] = useState(false);
@@ -8,6 +9,7 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
     const [resumeCategoryFilter, setResumeCategoryFilter] = useState('all');
     const [isSaving, setIsSaving] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
+    const [deleteTargetId, setDeleteTargetId] = useState(null);
 
     const initialResumeForm = {
         category: 'works',
@@ -87,15 +89,21 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
         }
     };
 
-    const handleDeleteResume = async (id) => {
-        if (!window.confirm("Hapus item resume ini?")) return;
+    const confirmDeleteResume = async () => {
+        if (!deleteTargetId) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/resume/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/resume/${deleteTargetId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            setStatus({ type: 'success', message: 'Item resume berhasil dihapus.' });
             if (onRefresh) onRefresh();
         } catch (err) {
-            alert("Gagal menghapus riwayat resume: " + (err.response?.data?.message || err.message));
+            setStatus({
+                type: 'error',
+                message: err.response?.data?.message || err.message || 'Gagal menghapus riwayat resume.'
+            });
+        } finally {
+            setDeleteTargetId(null);
         }
     };
 
@@ -254,25 +262,31 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
 
             {/* Existing Resume Items List */}
             <div className="space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                         Existing Resume Items ({resumeItems.length})
                     </h3>
 
-                    {/* Category Filter */}
-                    <div className="flex items-center gap-1">
-                        {['all', 'works', 'education', 'certifications'].map(cat => (
+                    {/* Category Filter (Matching MessagesTab segmented style) */}
+                    <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl border border-gray-200/80 text-xs font-semibold">
+                        {[
+                            { id: 'all', label: 'All', count: resumeItems.length },
+                            { id: 'works', label: 'Works', count: resumeItems.filter(i => i.category === 'works' || i.category === 'work' || i.category === 'organization').length },
+                            { id: 'education', label: 'Education', count: resumeItems.filter(i => i.category === 'education').length },
+                            { id: 'certifications', label: 'Certificates', count: resumeItems.filter(i => i.category === 'certifications' || i.category === 'certification' || i.category === 'certificate').length }
+                        ].map(tab => (
                             <button
-                                key={cat}
+                                key={tab.id}
                                 type="button"
-                                onClick={() => setResumeCategoryFilter(cat)}
-                                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer capitalize ${
-                                    resumeCategoryFilter === cat
-                                        ? 'bg-black text-white'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                onClick={() => setResumeCategoryFilter(tab.id)}
+                                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                                    resumeCategoryFilter === tab.id
+                                        ? 'bg-white text-gray-900 shadow-xs'
+                                        : 'text-gray-500 hover:text-gray-900'
                                 }`}
                             >
-                                {cat}
+                                <span>{tab.label}</span>
+                                <span className="text-[10px] text-gray-400 font-mono ml-1">({tab.count})</span>
                             </button>
                         ))}
                     </div>
@@ -280,7 +294,13 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
 
                 <div className="space-y-2">
                     {resumeItems
-                        .filter(item => resumeCategoryFilter === 'all' || item.category === resumeCategoryFilter)
+                        .filter(item => {
+                            if (resumeCategoryFilter === 'all') return true;
+                            if (resumeCategoryFilter === 'works') return item.category === 'works' || item.category === 'work' || item.category === 'organization';
+                            if (resumeCategoryFilter === 'education') return item.category === 'education';
+                            if (resumeCategoryFilter === 'certifications') return item.category === 'certifications' || item.category === 'certification' || item.category === 'certificate';
+                            return item.category === resumeCategoryFilter;
+                        })
                         .map((item) => (
                             <div
                                 key={item.id}
@@ -324,7 +344,7 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => handleDeleteResume(item.id)}
+                                        onClick={() => setDeleteTargetId(item.id)}
                                         className="p-1.5 text-gray-500 hover:text-red-600 rounded hover:bg-gray-100 transition-colors cursor-pointer"
                                         title="Delete"
                                     >
@@ -341,6 +361,15 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
                     )}
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmModal
+                isOpen={!!deleteTargetId}
+                title="Hapus Riwayat Resume"
+                message="Apakah Anda yakin ingin menghapus data riwayat ini? Data akan dihapus secara permanen dari database."
+                onConfirm={confirmDeleteResume}
+                onCancel={() => setDeleteTargetId(null)}
+            />
         </div>
     );
 }
