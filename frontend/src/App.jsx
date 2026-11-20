@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -8,6 +9,24 @@ import Contact from './pages/Contact';
 import Login from './pages/auth/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
+
+// Interceptor global untuk auto-logout saat token kedaluwarsa atau error 401
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const token = localStorage.getItem('admin_token');
+      if (token) {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        if (window.location.pathname.startsWith('/admin')) {
+          window.location.href = '/login?expired=true';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   return (

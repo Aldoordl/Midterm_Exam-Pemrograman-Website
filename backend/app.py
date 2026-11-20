@@ -46,19 +46,27 @@ swagger_template = {
 }
 swagger = Swagger(app, template=swagger_template)
 
-# Decorator untuk verifikasi JWT (Opsional, gunakan jika Anda memvalidasi token di backend)
+# Decorator untuk verifikasi JWT
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
         if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(" ")[1]
+            auth_header = request.headers['Authorization']
+            parts = auth_header.split(" ")
+            if len(parts) == 2 and parts[0] == "Bearer":
+                token = parts[1]
         if not token:
-            return {"status": "error", "message": "Token hilang!"}, 401
+            return {"status": "error", "message": "Token otorisasi diperlukan!"}, 401
         try:
+            # Memverifikasi signature dan masa berlaku ('exp')
             jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-        except:
-            return {"status": "error", "message": "Token tidak valid!"}, 401
+        except jwt.ExpiredSignatureError:
+            return {"status": "error", "message": "Sesi Anda telah kedaluwarsa. Silakan login kembali."}, 401
+        except jwt.InvalidTokenError:
+            return {"status": "error", "message": "Token tidak valid atau telah rusak."}, 401
+        except Exception as e:
+            return {"status": "error", "message": f"Autentikasi gagal: {str(e)}"}, 401
         return f(*args, **kwargs)
     return decorated
 
@@ -90,12 +98,12 @@ class AuthLogin(Resource):
         data = request.json
         try:
             response = supabase.auth.sign_in_with_password({"email": data['email'], "password": data['password']})
-            # Generate JWT Token manual atau gunakan token bawaan Supabase
+            # Generate JWT Token dengan masa berlaku 7 hari (standar aman 1-7 hari)
             token = jwt.encode({
                 'user': data['email'],
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=7)
             }, app.config['SECRET_KEY'], algorithm="HS256")
-            return {"status": "success", "token": token}, 200
+            return {"status": "success", "token": token, "expires_in": "7 days"}, 200
         except Exception as e:
             return {"status": "error", "message": str(e)}, 401
 
