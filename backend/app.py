@@ -312,7 +312,10 @@ class PublicMessage(Resource):
             description: Pesan terkirim
         """
         try:
-            data = request.json
+            data = request.json or {}
+            # Pastikan is_read tidak bernilai NULL di database
+            if 'is_read' not in data or data['is_read'] is None:
+                data['is_read'] = False
             response = supabase.table('messages').insert(data).execute()
             return {"status": "success", "data": response.data}, 201
         except Exception as e:
@@ -334,6 +337,67 @@ class AdminMessageList(Resource):
         """
         try:
             response = supabase.table('messages').select('*').order('created_at', desc=True).execute()
+            return {"status": "success", "data": response.data}, 200
+        except Exception as e:
+            return {"status": "error", "message": str(e)}, 500
+
+class AdminMessageDetail(Resource):
+    method_decorators = [token_required]
+    def put(self, id):
+        """
+        Update Status Pesan (is_read)
+        ---
+        tags:
+          - Messages
+        security:
+          - BearerAuth: []
+        parameters:
+          - in: path
+            name: id
+            type: string
+            required: true
+          - in: body
+            name: body
+            schema:
+              type: object
+        responses:
+          200:
+            description: Status pesan berhasil diperbarui
+        """
+        try:
+            data = request.json or {}
+            response = supabase.table('messages').update(data).eq('id', str(id)).execute()
+            if not response.data:
+                return {
+                    "status": "error",
+                    "message": "Gagal memperbarui status pesan di Supabase (0 baris diperbarui). Kemungkinan Policy RLS (Row Level Security) untuk UPDATE belum dibuat pada tabel 'messages'."
+                }, 400
+            return {"status": "success", "data": response.data}, 200
+        except Exception as e:
+            return {"status": "error", "message": str(e)}, 500
+
+    def patch(self, id):
+        return self.put(id)
+
+    def delete(self, id):
+        """
+        Hapus Pesan
+        ---
+        tags:
+          - Messages
+        security:
+          - BearerAuth: []
+        parameters:
+          - in: path
+            name: id
+            type: string
+            required: true
+        responses:
+          200:
+            description: Pesan berhasil dihapus
+        """
+        try:
+            response = supabase.table('messages').delete().eq('id', id).execute()
             return {"status": "success", "data": response.data}, 200
         except Exception as e:
             return {"status": "error", "message": str(e)}, 500
@@ -458,6 +522,7 @@ api.add_resource(AdminProjectDetail, '/api/admin/projects/<string:id>')
 # Messages
 api.add_resource(PublicMessage, '/api/messages')
 api.add_resource(AdminMessageList, '/api/admin/messages')
+api.add_resource(AdminMessageDetail, '/api/admin/messages/<string:id>')
 
 # Resume
 api.add_resource(PublicResume, '/api/resume')

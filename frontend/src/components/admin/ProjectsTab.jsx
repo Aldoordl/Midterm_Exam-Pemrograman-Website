@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { IconEdit, IconTrash, IconCheck, IconAlertCircle, IconFolder, IconFolderCheck } from '../Icons';
+import ConfirmModal from '../ConfirmModal';
 
 function ProjectsTab({ projects, token, onRefresh }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
+    const [deleteTargetId, setDeleteTargetId] = useState(null);
 
     const initialFormState = {
         title: '',
@@ -99,15 +101,21 @@ function ProjectsTab({ projects, token, onRefresh }) {
         }
     };
 
-    const handleDeleteProject = async (id) => {
-        if (!window.confirm("Hapus proyek ini?")) return;
+    const confirmDeleteProject = async () => {
+        if (!deleteTargetId) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/projects/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/projects/${deleteTargetId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            setStatus({ type: 'success', message: 'Proyek berhasil dihapus.' });
             if (onRefresh) onRefresh();
         } catch (error) {
-            alert("Gagal menghapus proyek: " + (error.response?.data?.message || error.message));
+            setStatus({
+                type: 'error',
+                message: error.response?.data?.message || error.message || 'Gagal menghapus proyek.'
+            });
+        } finally {
+            setDeleteTargetId(null);
         }
     };
 
@@ -306,7 +314,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
                                     <IconEdit className="w-3.5 h-3.5" />
                                 </button>
                                 <button
-                                    onClick={() => handleDeleteProject(proj.id)}
+                                    onClick={() => setDeleteTargetId(proj.id)}
                                     className="p-1.5 text-gray-500 hover:text-red-600 rounded hover:bg-gray-100 transition-colors cursor-pointer"
                                     title="Delete"
                                 >
@@ -323,6 +331,15 @@ function ProjectsTab({ projects, token, onRefresh }) {
                     )}
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmModal
+                isOpen={!!deleteTargetId}
+                title="Hapus Proyek"
+                message="Apakah Anda yakin ingin menghapus proyek ini? Proyek akan dihapus secara permanen dari portofolio."
+                onConfirm={confirmDeleteProject}
+                onCancel={() => setDeleteTargetId(null)}
+            />
         </div>
     );
 }
