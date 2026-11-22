@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import AlertBanner from '../components/AlertBanner';
 import {
-    IconSend,
-    IconCheck
+    IconSend
 } from '../components/Icons';
 
 function Contact() {
@@ -101,15 +101,11 @@ function Contact() {
                             Send a Direct Message
                         </h2>
 
-                        {status.message && (
-                            <div className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${status.type === 'success'
-                                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                : 'bg-red-50 text-red-800 border border-red-200'
-                                }`}>
-                                <IconCheck className="w-4 h-4 text-emerald-600" />
-                                <span>{status.message}</span>
-                            </div>
-                        )}
+                        <AlertBanner
+                            type={status.type}
+                            message={status.message}
+                            onClose={() => setStatus({ type: '', message: '' })}
+                        />
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-1.5">

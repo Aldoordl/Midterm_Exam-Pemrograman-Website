@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { IconCheck, IconUser } from '../Icons';
+import AlertBanner from '../AlertBanner';
 
 function ProfileTab({ initialProfile, token, onRefresh }) {
     const defaultState = {
@@ -82,15 +83,11 @@ function ProfileTab({ initialProfile, token, onRefresh }) {
                     <span className="text-[10px] font-mono text-gray-400">Profile Owner</span>
                 </div>
 
-                {status.message && (
-                    <div className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${status.type === 'success'
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : 'bg-red-50 text-red-800 border border-red-200'
-                        }`}>
-                        <IconCheck className="w-4 h-4 shrink-0 text-emerald-600" />
-                        <span>{status.message}</span>
-                    </div>
-                )}
+                <AlertBanner
+                    type={status.type}
+                    message={status.message}
+                    onClose={() => setStatus({ type: '', message: '' })}
+                />
 
                 <form onSubmit={handleSubmitProfile} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

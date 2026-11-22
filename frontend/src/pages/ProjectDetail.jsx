@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import NotFound from './NotFound';
 import {
     IconArrowUpRight,
     IconGithub,
@@ -12,40 +13,22 @@ function ProjectDetail() {
     const { slug } = useParams();
     const [project, setProject] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
+        setIsLoading(true);
         axios.get(`${import.meta.env.VITE_API_URL}/api/projects/${slug}`)
             .then((response) => {
-                if (response.data && response.data.status === 'success') {
+                if (response.data && response.data.status === 'success' && response.data.data) {
                     setProject(response.data.data);
                 } else {
-                    setError(response.data ? response.data.message : 'Project not found.');
+                    setProject(null);
                 }
-                setIsLoading(false);
             })
             .catch(() => {
-                setProject({
-                    title: 'Discover The Beauty Of Nature',
-                    slug: slug,
-                    short_description: 'An interactive exploration platform for outdoor enthusiasts, featuring trail maps, scenic spot guides, and environmental logging.',
-                    content: `Overview:
-An exploration platform designed to showcase the beauty of nature trails and protected landscapes. The application features route mapping, localized weather updates, and a database of rare flora and fauna observations.
-
-Key Engineering Highlights:
-1. Interactive Map Integration: Fluid responsive map rendering with pin clustering for thousands of outdoor spots.
-2. High-Performance API: Backend endpoints structured with Flask and PostgreSQL with query execution times consistently under 35ms.
-3. Offline Support: Caching essential map routes and emergency offline contact details.
-
-Outcome & Impact:
-- Used by over 2,500 active hikers during pilot testing.
-- High accessibility and 99.9% uptime during peak weekend usage.`,
-                    tech_stack: ['React', 'TailwindCSS', 'Flask', 'PostgreSQL'],
-                    github_url: 'https://github.com',
-                    live_url: 'https://demo.example.com',
-                    image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80',
-                    created_at: '2026-11-01T10:00:00Z'
-                });
+                // Jika slug tidak ditemukan di database (404/error), set null agar menampilkan page 404
+                setProject(null);
+            })
+            .finally(() => {
                 setIsLoading(false);
             });
     }, [slug]);
@@ -61,20 +44,9 @@ Outcome & Impact:
         );
     }
 
-    if (error && !project) {
-        return (
-            <div className="py-12">
-                <div className="architect-frame py-20 text-center space-y-4">
-                    <h2 className="text-xl font-bold text-gray-900">Project Not Found</h2>
-                    <p className="text-xs text-gray-500">{error || "The project you're looking for does not exist."}</p>
-                    <div>
-                        <Link to="/" className="btn-secondary text-xs">
-                            ← Back to Portfolio
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        );
+    // Jika slug tidak valid atau proyek tidak ditemukan, tampilkan halaman 404 yang konsisten
+    if (!project) {
+        return <NotFound />;
     }
 
     return (
