@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { projectService } from '../../services';
 import { IconEdit, IconTrash, IconFolder, IconFolderCheck } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
 import AlertBanner from '../AlertBanner';
@@ -69,18 +69,14 @@ function ProjectsTab({ projects, token, onRefresh }) {
             };
 
             if (isEditing) {
-                const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/projects/${editId}`, payload, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await projectService.update(editId, payload);
                 if (response.data?.status === 'error') {
                     setStatus({ type: 'error', message: response.data?.message || 'Gagal memperbarui proyek.' });
                     return;
                 }
                 setStatus({ type: 'success', message: 'Proyek berhasil diperbarui!' });
             } else {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/projects`, payload, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await projectService.create(payload);
                 if (response.data?.status === 'error') {
                     setStatus({ type: 'error', message: response.data?.message || 'Gagal menambahkan proyek.' });
                     return;
@@ -105,9 +101,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
     const confirmDeleteProject = async () => {
         if (!deleteTargetId) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/projects/${deleteTargetId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await projectService.delete(deleteTargetId);
             setStatus({ type: 'success', message: 'Proyek berhasil dihapus.' });
             if (onRefresh) onRefresh();
         } catch (error) {

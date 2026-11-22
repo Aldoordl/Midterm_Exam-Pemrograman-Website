@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { resumeService } from '../../services';
 import { IconEdit, IconTrash, IconBriefcase } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
 import AlertBanner from '../AlertBanner';
@@ -58,18 +58,14 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
 
         try {
             if (isEditingResume) {
-                const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/resume/${resumeEditId}`, resumeForm, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await resumeService.update(resumeEditId, resumeForm);
                 if (res.data?.status === 'error') {
                     setStatus({ type: 'error', message: res.data?.message || 'Gagal memperbarui riwayat resume.' });
                     return;
                 }
                 setStatus({ type: 'success', message: 'Riwayat resume berhasil diperbarui!' });
             } else {
-                const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/resume`, resumeForm, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await resumeService.create(resumeForm);
                 if (res.data?.status === 'error') {
                     setStatus({ type: 'error', message: res.data?.message || 'Gagal menambahkan riwayat resume.' });
                     return;
@@ -93,9 +89,7 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
     const confirmDeleteResume = async () => {
         if (!deleteTargetId) return;
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/resume/${deleteTargetId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await resumeService.delete(deleteTargetId);
             setStatus({ type: 'success', message: 'Item resume berhasil dihapus.' });
             if (onRefresh) onRefresh();
         } catch (err) {
