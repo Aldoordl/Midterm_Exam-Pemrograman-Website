@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { IconEdit, IconTrash, IconCheck, IconAlertCircle, IconFolder, IconFolderCheck } from '../Icons';
+import { IconEdit, IconTrash, IconFolder, IconFolderCheck } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
+import AlertBanner from '../AlertBanner';
 
 function ProjectsTab({ projects, token, onRefresh }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -144,19 +145,11 @@ function ProjectsTab({ projects, token, onRefresh }) {
                     )}
                 </div>
 
-                {status.message && (
-                    <div className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${status.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                        : 'bg-red-50 text-red-800 border border-red-200'
-                        }`}>
-                        {status.type === 'success' ? (
-                            <IconCheck className="w-4 h-4 shrink-0 text-emerald-600" />
-                        ) : (
-                            <IconAlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                        )}
-                        <span>{status.message}</span>
-                    </div>
-                )}
+                <AlertBanner
+                    type={status.type}
+                    message={status.message}
+                    onClose={() => setStatus({ type: '', message: '' })}
+                />
 
                 <form onSubmit={handleSubmitProject} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

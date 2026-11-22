@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { IconCheck, IconTrash, IconMail, IconAlertCircle } from '../Icons';
+import { IconCheck, IconTrash, IconMail } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
+import AlertBanner from '../AlertBanner';
 
 function MessagesTab({ messages = [], token, onRefresh }) {
     const [filter, setFilter] = useState('all'); // 'all' | 'unread' | 'read'
@@ -134,20 +135,11 @@ function MessagesTab({ messages = [], token, onRefresh }) {
             </div>
 
             {/* Notification Banner */}
-            {status.message && (
-                <div className={`p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${
-                    status.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                        : 'bg-red-50 text-red-800 border border-red-200'
-                }`}>
-                    {status.type === 'success' ? (
-                        <IconCheck className="w-4 h-4 shrink-0 text-emerald-600" />
-                    ) : (
-                        <IconAlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                    )}
-                    <span>{status.message}</span>
-                </div>
-            )}
+            <AlertBanner
+                type={status.type}
+                message={status.message}
+                onClose={() => setStatus({ type: '', message: '' })}
+            />
 
             {/* Message List */}
             <div className="space-y-3">

@@ -7,6 +7,7 @@ import Home from './pages/Landing';
 import ProjectDetail from './pages/ProjectDetail';
 import Contact from './pages/Contact';
 import Login from './pages/auth/Login';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -46,6 +47,9 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
             </Route>
+
+            {/* 404 Catch-All Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />
