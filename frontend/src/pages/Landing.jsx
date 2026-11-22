@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { projectService, profileService, resumeService } from '../services';
 import HeroSection from '../components/landing/HeroSection';
 import MarqueeSection from '../components/landing/MarqueeSection';
 import AboutSection from '../components/landing/AboutSection';
@@ -23,7 +23,7 @@ function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/api/projects`)
+        projectService.getPublic()
             .then((res) => {
                 if (res.data && res.data.status === 'success') {
                     setProjects(res.data.data);
@@ -34,7 +34,7 @@ function Home() {
                 setIsLoading(false);
             });
 
-        axios.get(`${import.meta.env.VITE_API_URL}/api/profile`)
+        profileService.getPublic()
             .then((res) => {
                 if (res.data && res.data.status === 'success') {
                     setProfile(res.data.data);
@@ -48,7 +48,7 @@ function Home() {
                 });
             });
 
-        axios.get(`${import.meta.env.VITE_API_URL}/api/resume`)
+        resumeService.getPublic()
             .then((res) => {
                 if (res.data && res.data.status === 'success' && Array.isArray(res.data.data)) {
                     setResumeItems(res.data.data);

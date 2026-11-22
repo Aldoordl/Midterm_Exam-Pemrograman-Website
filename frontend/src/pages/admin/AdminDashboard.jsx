@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { messageService, projectService, profileService, resumeService, authService } from '../../services';
 import ProjectsTab from '../../components/admin/ProjectsTab';
 import ResumeTab from '../../components/admin/ResumeTab';
 import ProfileTab from '../../components/admin/ProfileTab';
@@ -27,11 +27,11 @@ function AdminDashboard() {
         setIsLoading(true);
         try {
             const [msgRes, projRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_API_URL}/api/admin/messages`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
+                messageService.getAllAdmin().catch(err => {
                     console.error("Gagal mengambil pesan:", err);
                     return { data: { status: 'error', data: [] } };
                 }),
-                axios.get(`${import.meta.env.VITE_API_URL}/api/admin/projects`, { headers: { Authorization: `Bearer ${token}` } }).catch(err => {
+                projectService.getAllAdmin().catch(err => {
                     console.error("Gagal mengambil proyek:", err);
                     return { data: { status: 'error', data: [] } };
                 })
@@ -47,7 +47,7 @@ function AdminDashboard() {
 
     const fetchProfile = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profile`);
+            const res = await profileService.getPublic();
             if (res.data && res.data.status === 'success' && res.data.data) {
                 setProfile(res.data.data);
             }
@@ -58,7 +58,7 @@ function AdminDashboard() {
 
     const fetchResume = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/resume`);
+            const res = await resumeService.getPublic();
             if (res.data && res.data.status === 'success' && Array.isArray(res.data.data)) {
                 setResumeItems(res.data.data);
             }
@@ -68,8 +68,7 @@ function AdminDashboard() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
+        authService.logout();
         navigate('/login');
     };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { messageService } from '../services';
 import AlertBanner from '../components/AlertBanner';
 import {
     IconSend
@@ -31,7 +31,7 @@ function Contact() {
                 ...formData,
                 is_read: false
             };
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, payload);
+            const response = await messageService.send(payload);
 
             if (response.data && response.data.status === 'success') {
                 setStatus({ type: 'success', message: 'Your message has been sent successfully! I will reply soon.' });

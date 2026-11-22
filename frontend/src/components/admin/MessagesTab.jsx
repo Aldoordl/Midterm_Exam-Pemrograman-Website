@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { messageService } from '../../services';
 import { IconCheck, IconTrash, IconMail } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
 import AlertBanner from '../AlertBanner';
@@ -25,11 +25,7 @@ function MessagesTab({ messages = [], token, onRefresh }) {
 
         try {
             const nextStatus = currentIsRead === true ? false : true;
-            const res = await axios.put(
-                `${import.meta.env.VITE_API_URL}/api/admin/messages/${id}`,
-                { is_read: nextStatus },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const res = await messageService.updateStatus(id, { is_read: nextStatus });
 
             if (res.data?.status === 'error') {
                 setStatus({
@@ -61,10 +57,7 @@ function MessagesTab({ messages = [], token, onRefresh }) {
         setStatus({ type: '', message: '' });
 
         try {
-            await axios.delete(
-                `${import.meta.env.VITE_API_URL}/api/admin/messages/${deleteTargetId}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await messageService.delete(deleteTargetId);
 
             setStatus({ type: 'success', message: 'Pesan berhasil dihapus!' });
             if (onRefresh) onRefresh();

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services';
 import { IconShieldCheck, IconArrowUpRight } from '../../components/Icons';
 
 function Login() {
@@ -30,10 +30,11 @@ function Login() {
         setError('');
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, credentials);
+            const response = await authService.login(credentials);
 
             if (response.data && response.data.status === 'success') {
-                localStorage.setItem('admin_token', response.data.token);
+                const token = response.data.token || response.data.data?.token;
+                localStorage.setItem('admin_token', token);
                 localStorage.setItem('admin_user', JSON.stringify({ email: credentials.email }));
                 navigate('/admin/dashboard');
             } else {

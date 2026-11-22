@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { projectService } from '../services';
 import NotFound from './NotFound';
 import {
     IconArrowUpRight,
@@ -16,7 +16,7 @@ function ProjectDetail() {
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get(`${import.meta.env.VITE_API_URL}/api/projects/${slug}`)
+        projectService.getPublicDetail(slug)
             .then((response) => {
                 if (response.data && response.data.status === 'success' && response.data.data) {
                     setProject(response.data.data);
