@@ -39,8 +39,9 @@ function Contact() {
             } else {
                 setStatus({ type: 'error', message: response.data?.message || 'Failed to submit message.' });
             }
-        } catch {
-            setStatus({ type: 'error', message: 'Unable to reach backend server. Please check your connection.' });
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || 'Unable to reach backend server. Please check your connection.';
+            setStatus({ type: 'error', message: errorMsg });
         } finally {
             setIsSubmitting(false);
         }
@@ -108,6 +109,17 @@ function Contact() {
                         />
 
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Honeypot field - Tersembunyi untuk menjebak bot spam */}
+                            <input
+                                type="text"
+                                name="_gotcha"
+                                value={formData._gotcha || ''}
+                                onChange={handleChange}
+                                style={{ display: 'none' }}
+                                tabIndex="-1"
+                                autoComplete="off"
+                                aria-hidden="true"
+                            />
                             <div className="space-y-1.5">
                                 <label className="block text-xs font-medium text-gray-700">
                                     Your Name

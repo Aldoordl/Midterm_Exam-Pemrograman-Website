@@ -3,6 +3,7 @@ from flask_restful import Resource
 from config import supabase
 from middleware.auth import token_required
 from utils.responses import success_response, error_response
+from utils.validators import ProjectSchema, validate_payload
 
 class PublicProjectList(Resource):
     def get(self):
@@ -84,8 +85,12 @@ class AdminProjectList(Resource):
             description: Proyek berhasil ditambahkan
         """
         try:
-            data = request.json or {}
-            response = supabase.table('projects').insert(data).execute()
+            raw_data = request.json or {}
+            cleaned_data, error_msg = validate_payload(ProjectSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            response = supabase.table('projects').insert(cleaned_data).execute()
             return success_response(data=response.data, message="Proyek berhasil ditambahkan", code=201)
         except Exception as e:
             return error_response(str(e), 500)
@@ -115,8 +120,12 @@ class AdminProjectDetail(Resource):
             description: Proyek berhasil diperbarui
         """
         try:
-            data = request.json or {}
-            response = supabase.table('projects').update(data).eq('id', id).execute()
+            raw_data = request.json or {}
+            cleaned_data, error_msg = validate_payload(ProjectSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            response = supabase.table('projects').update(cleaned_data).eq('id', id).execute()
             return success_response(data=response.data, message="Proyek berhasil diperbarui")
         except Exception as e:
             return error_response(str(e), 500)

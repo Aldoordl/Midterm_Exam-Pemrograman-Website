@@ -3,6 +3,7 @@ from flask_restful import Resource
 from config import supabase
 from middleware.auth import token_required
 from utils.responses import success_response, error_response
+from utils.validators import ProfileSchema, validate_payload
 
 class PublicProfile(Resource):
     def get(self):
@@ -44,9 +45,13 @@ class AdminProfile(Resource):
             description: Profil berhasil diperbarui
         """
         try:
-            data = request.json or {}
-            data['id'] = 1
-            response = supabase.table('profiles').upsert(data).execute()
+            raw_data = request.json or {}
+            cleaned_data, error_msg = validate_payload(ProfileSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            cleaned_data['id'] = 1
+            response = supabase.table('profiles').upsert(cleaned_data).execute()
             return success_response(data=response.data, message="Profil berhasil diperbarui")
         except Exception as e:
             return error_response(str(e), 500)

@@ -3,9 +3,11 @@ import jwt
 from flask import request
 from flask_restful import Resource
 from config import supabase, SECRET_KEY
+from middleware.rate_limit import rate_limit
 from utils.responses import success_response, error_response
 
 class AuthLogin(Resource):
+    @rate_limit(limit=5, window_seconds=60)
     def post(self):
         """
         Login Admin
