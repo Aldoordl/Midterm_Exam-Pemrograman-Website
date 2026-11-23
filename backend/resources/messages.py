@@ -2,9 +2,12 @@ from flask import request
 from flask_restful import Resource
 from config import supabase
 from middleware.auth import token_required
+from middleware.rate_limit import rate_limit
 from utils.responses import success_response, error_response
+from utils.validators import MessageCreateSchema, validate_payload
 
 class PublicMessage(Resource):
+    @rate_limit(limit=5, window_seconds=60)
     def post(self):
         """
         Kirim Pesan (Dari Pengunjung)
@@ -21,10 +24,19 @@ class PublicMessage(Resource):
             description: Pesan terkirim
         """
         try:
-            data = request.json or {}
-            if 'is_read' not in data or data['is_read'] is None:
-                data['is_read'] = False
-            response = supabase.table('messages').insert(data).execute()
+            raw_data = request.json or {}
+
+            # Proteksi Honeypot Anti-Spam: jika field _gotcha terisi, buang tanpa simpan (silent discard)
+            if raw_data.get('_gotcha'):
+                return success_response(message="Pesan berhasil dikirim", code=201)
+
+            # Validasi & Sanitasi Payload
+            cleaned_data, error_msg = validate_payload(MessageCreateSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            cleaned_data['is_read'] = False
+            response = supabase.table('messages').insert(cleaned_data, returning="minimal").execute()
             return success_response(data=response.data, message="Pesan berhasil dikirim", code=201)
         except Exception as e:
             return error_response(str(e), 500)

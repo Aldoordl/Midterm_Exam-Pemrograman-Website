@@ -3,6 +3,7 @@ from flask_restful import Resource
 from config import supabase
 from middleware.auth import token_required
 from utils.responses import success_response, error_response
+from utils.validators import ResumeItemSchema, validate_payload
 
 class PublicResume(Resource):
     def get(self):
@@ -42,8 +43,12 @@ class AdminResumeList(Resource):
             description: Riwayat ditambahkan
         """
         try:
-            data = request.json or {}
-            response = supabase.table('resume_items').insert(data).execute()
+            raw_data = request.json or {}
+            cleaned_data, error_msg = validate_payload(ResumeItemSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            response = supabase.table('resume_items').insert(cleaned_data).execute()
             return success_response(data=response.data, message="Riwayat resume berhasil ditambahkan", code=201)
         except Exception as e:
             return error_response(str(e), 500)
@@ -73,8 +78,12 @@ class AdminResumeDetail(Resource):
             description: Riwayat diperbarui
         """
         try:
-            data = request.json or {}
-            response = supabase.table('resume_items').update(data).eq('id', id).execute()
+            raw_data = request.json or {}
+            cleaned_data, error_msg = validate_payload(ResumeItemSchema, raw_data)
+            if error_msg:
+                return error_response(error_msg, 400)
+
+            response = supabase.table('resume_items').update(cleaned_data).eq('id', id).execute()
             return success_response(data=response.data, message="Riwayat resume berhasil diperbarui")
         except Exception as e:
             return error_response(str(e), 500)
