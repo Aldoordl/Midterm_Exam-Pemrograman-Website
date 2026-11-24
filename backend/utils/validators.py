@@ -7,16 +7,16 @@ EMAIL_REGEX = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 class MessageCreateSchema(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    sender_name: str = Field(..., min_length=2, max_length=100, description="Nama pengirim")
-    sender_email: str = Field(..., max_length=150, description="Email pengirim")
-    message_body: str = Field(..., min_length=5, max_length=3000, description="Isi pesan")
-    honeypot: Optional[str] = Field(default=None, alias="_gotcha", description="Honeypot anti-spam")
+    sender_name: str = Field(..., min_length=2, max_length=100, description="Sender name")
+    sender_email: str = Field(..., max_length=150, description="Sender email")
+    message_body: str = Field(..., min_length=5, max_length=3000, description="Message body")
+    honeypot: Optional[str] = Field(default=None, alias="_gotcha", description="Anti-spam honeypot")
 
     @field_validator('sender_email')
     @classmethod
     def validate_email_format(cls, v: str) -> str:
         if not re.match(EMAIL_REGEX, v):
-            raise ValueError("Format email tidak valid")
+            raise ValueError("Invalid email format")
         return v.lower()
 
     @field_validator('sender_name')
@@ -24,13 +24,12 @@ class MessageCreateSchema(BaseModel):
     def sanitize_name(cls, v: str) -> str:
         sanitized = re.sub(r'<[^>]*>', '', v)
         if not sanitized.strip():
-            raise ValueError("Nama tidak boleh kosong atau hanya berisi tag HTML")
+            raise ValueError("Name cannot be empty or contain only HTML tags")
         return sanitized.strip()
 
     @field_validator('message_body')
     @classmethod
     def sanitize_message(cls, v: str) -> str:
-        # Hapus tag script berbahaya
         sanitized = re.sub(r'<script.*?>.*?</script>', '', v, flags=re.IGNORECASE)
         return sanitized.strip()
 
@@ -53,14 +52,14 @@ class ProjectSchema(BaseModel):
     def validate_slug(cls, v: str) -> str:
         clean_slug = re.sub(r'[^a-zA-Z0-9_-]', '-', v.lower()).strip('-')
         if not clean_slug:
-            raise ValueError("Slug tidak valid")
+            raise ValueError("Invalid slug format")
         return clean_slug
 
 
 class ResumeItemSchema(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    category: str = Field(..., description="Kategori riwayat")
+    category: str = Field(..., description="Resume item category")
     title: str = Field(..., min_length=2, max_length=150)
     organization: str = Field(..., min_length=1, max_length=150)
     period: str = Field(..., min_length=1, max_length=80)
@@ -73,7 +72,7 @@ class ResumeItemSchema(BaseModel):
     def validate_category(cls, v: str) -> str:
         allowed = {'works', 'work', 'education', 'certifications', 'certification', 'certificate', 'organization'}
         if v.lower() not in allowed:
-            raise ValueError(f"Kategori tidak valid. Pilihan: {', '.join(allowed)}")
+            raise ValueError(f"Invalid category. Allowed options: {', '.join(allowed)}")
         return v.lower()
 
 
@@ -89,7 +88,7 @@ class ProfileSchema(BaseModel):
 
 def validate_payload(schema_cls, data: dict):
     """
-    Helper untuk memvalidasi dictionary terhadap Pydantic schema.
+    Validates a dictionary against a Pydantic schema class.
     Returns: (cleaned_dict, error_message_or_None)
     """
     try:
@@ -101,9 +100,8 @@ def validate_payload(schema_cls, data: dict):
         if hasattr(e, 'errors'):
             errs = e.errors()
             field = ".".join(str(loc) for loc in errs[0].get('loc', []))
-            msg = errs[0].get('msg', 'Format data tidak valid')
-            # Bersihkan prefix bawaan pydantic seperti 'Value error, '
+            msg = errs[0].get('msg', 'Invalid data format')
             if msg.startswith('Value error, '):
                 msg = msg.replace('Value error, ', '')
-            return None, f"Validasi gagal pada '{field}': {msg}"
+            return None, f"Validation failed on '{field}': {msg}"
         return None, str(e)

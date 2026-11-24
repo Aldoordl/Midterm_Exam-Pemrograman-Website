@@ -1,6 +1,6 @@
-def success_response(data=None, message="Berhasil", code=200, **kwargs):
+def success_response(data=None, message="Success", code=200, **kwargs):
     """
-    Format standar respons sukses API:
+    Standard API success response envelope:
     {
         "status": "success",
         "data": ...,
@@ -17,9 +17,9 @@ def success_response(data=None, message="Berhasil", code=200, **kwargs):
     return payload, code
 
 
-def error_response(message="Terjadi kesalahan pada server", code=400, data=None):
+def error_response(message="An internal server error occurred", code=400, data=None):
     """
-    Format standar respons error API:
+    Standard API error response envelope:
     {
         "status": "error",
         "data": ...,

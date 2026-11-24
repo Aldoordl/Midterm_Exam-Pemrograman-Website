@@ -35,7 +35,7 @@ def rate_limit(limit=10, window_seconds=60):
                 if len(valid_timestamps) >= limit:
                     retry_after = int(window_seconds - (current_time - valid_timestamps[0]))
                     return error_response(
-                        f"Terlalu banyak permintaan (Rate limit tercapai). Silakan tunggu {max(1, retry_after)} detik sebelum mencoba kembali.",
+                        f"Too many requests (Rate limit reached). Please wait {max(1, retry_after)} seconds before trying again.",
                         429
                     )
 

@@ -30,21 +30,21 @@ function MessagesTab({ messages = [], token, onRefresh }) {
             if (res.data?.status === 'error') {
                 setStatus({
                     type: 'error',
-                    message: res.data?.message || 'Gagal memperbarui status pesan.'
+                    message: res.data?.message || 'Failed to update message status.'
                 });
                 return;
             }
 
             setStatus({
                 type: 'success',
-                message: nextStatus ? 'Pesan ditandai sebagai sudah dibaca.' : 'Pesan ditandai sebagai belum dibaca.'
+                message: nextStatus ? 'Message marked as read.' : 'Message marked as unread.'
             });
 
             if (onRefresh) onRefresh();
         } catch (error) {
             setStatus({
                 type: 'error',
-                message: error.response?.data?.message || 'Gagal memperbarui status pesan.'
+                message: error.response?.data?.message || 'Failed to update message status.'
             });
         } finally {
             setLoadingId(null);
@@ -59,12 +59,12 @@ function MessagesTab({ messages = [], token, onRefresh }) {
         try {
             await messageService.delete(deleteTargetId);
 
-            setStatus({ type: 'success', message: 'Pesan berhasil dihapus!' });
+            setStatus({ type: 'success', message: 'Message deleted successfully!' });
             if (onRefresh) onRefresh();
         } catch (error) {
             setStatus({
                 type: 'error',
-                message: error.response?.data?.message || 'Gagal menghapus pesan.'
+                message: error.response?.data?.message || 'Failed to delete message.'
             });
         } finally {
             setLoadingId(null);
@@ -79,10 +79,10 @@ function MessagesTab({ messages = [], token, onRefresh }) {
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
                         <IconMail className="w-4 h-4 text-gray-700" />
-                        <h2 className="text-sm font-bold text-gray-900">Inbox Pesan Masuk</h2>
+                        <h2 className="text-sm font-bold text-gray-900">Inbox Messages</h2>
                     </div>
                     <p className="text-[11px] text-gray-500">
-                        Kelola formulir kontak dan pesan yang dikirim oleh pengunjung web.
+                        Manage contact inquiries and messages sent by website visitors.
                     </p>
                 </div>
 
@@ -173,7 +173,7 @@ function MessagesTab({ messages = [], token, onRefresh }) {
 
                                 <div className="flex items-center gap-3">
                                     <span className="text-gray-400 font-mono text-[10px]">
-                                        {msg.created_at ? new Date(msg.created_at).toLocaleString('id-ID', {
+                                        {msg.created_at ? new Date(msg.created_at).toLocaleString('en-US', {
                                             day: 'numeric',
                                             month: 'short',
                                             year: 'numeric',
@@ -189,7 +189,7 @@ function MessagesTab({ messages = [], token, onRefresh }) {
                                             onClick={() => handleToggleRead(msg.id, msg.is_read)}
                                             disabled={isLoading}
                                             className="btn-secondary text-[11px] py-1 px-2.5 cursor-pointer flex items-center gap-1.5"
-                                            title={isUnread ? "Tandai sudah dibaca" : "Tandai belum dibaca"}
+                                            title={isUnread ? "Mark as read" : "Mark as unread"}
                                         >
                                             <IconCheck className="w-3 h-3 text-gray-500" />
                                             <span>{isUnread ? 'Mark as Read' : 'Mark Unread'}</span>
@@ -200,7 +200,7 @@ function MessagesTab({ messages = [], token, onRefresh }) {
                                             onClick={() => setDeleteTargetId(msg.id)}
                                             disabled={isLoading}
                                             className="p-1.5 text-gray-400 hover:text-black rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                                            title="Hapus pesan"
+                                            title="Delete message"
                                         >
                                             <IconTrash className="w-3.5 h-3.5" />
                                         </button>
@@ -221,10 +221,10 @@ function MessagesTab({ messages = [], token, onRefresh }) {
                 {filteredMessages.length === 0 && (
                     <div className="text-center py-12 text-xs text-gray-400 font-mono border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
                         {filter === 'unread'
-                            ? 'Tidak ada pesan yang belum dibaca.'
+                            ? 'No unread messages.'
                             : filter === 'read'
-                            ? 'Belum ada pesan yang sudah dibaca.'
-                            : 'Belum ada pesan masuk.'}
+                            ? 'No read messages yet.'
+                            : 'No messages in inbox.'}
                     </div>
                 )}
             </div>
@@ -232,8 +232,8 @@ function MessagesTab({ messages = [], token, onRefresh }) {
             {/* Confirmation Modal */}
             <ConfirmModal
                 isOpen={!!deleteTargetId}
-                title="Hapus Pesan"
-                message="Apakah Anda yakin ingin menghapus pesan ini secara permanen dari database?"
+                title="Delete Message"
+                message="Are you sure you want to permanently delete this message from the database?"
                 onConfirm={confirmDeleteMessage}
                 onCancel={() => setDeleteTargetId(null)}
             />

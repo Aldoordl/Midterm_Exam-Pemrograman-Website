@@ -28,7 +28,7 @@ class PublicMessage(Resource):
 
             # Proteksi Honeypot Anti-Spam: jika field _gotcha terisi, buang tanpa simpan (silent discard)
             if raw_data.get('_gotcha'):
-                return success_response(message="Pesan berhasil dikirim", code=201)
+                return success_response(message="Message sent successfully", code=201)
 
             # Validasi & Sanitasi Payload
             cleaned_data, error_msg = validate_payload(MessageCreateSchema, raw_data)
@@ -37,7 +37,7 @@ class PublicMessage(Resource):
 
             cleaned_data['is_read'] = False
             response = supabase.table('messages').insert(cleaned_data, returning="minimal").execute()
-            return success_response(data=response.data, message="Pesan berhasil dikirim", code=201)
+            return success_response(data=response.data, message="Message sent successfully", code=201)
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -58,7 +58,7 @@ class AdminMessageList(Resource):
         """
         try:
             response = supabase.table('messages').select('*').order('created_at', desc=True).execute()
-            return success_response(data=response.data, message="Daftar pesan berhasil diambil")
+            return success_response(data=response.data, message="Message list fetched successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -91,10 +91,10 @@ class AdminMessageDetail(Resource):
             response = supabase.table('messages').update(data).eq('id', str(id)).execute()
             if not response.data:
                 return error_response(
-                    "Gagal memperbarui status pesan di Supabase (0 baris diperbarui). Pastikan Policy RLS untuk UPDATE aktif pada tabel 'messages'.",
+                    "Failed to update message status in Supabase (0 rows updated). Ensure RLS UPDATE policy is active on 'messages' table.",
                     400
                 )
-            return success_response(data=response.data, message="Status pesan berhasil diperbarui")
+            return success_response(data=response.data, message="Message status updated successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -120,6 +120,6 @@ class AdminMessageDetail(Resource):
         """
         try:
             response = supabase.table('messages').delete().eq('id', id).execute()
-            return success_response(data=response.data, message="Pesan berhasil dihapus")
+            return success_response(data=response.data, message="Message deleted successfully")
         except Exception as e:
             return error_response(str(e), 500)
