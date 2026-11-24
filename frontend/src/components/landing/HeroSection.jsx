@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import { IconCode, IconDownload } from '../Icons';
+import { HeroSkeleton } from '../SkeletonBlueprint';
 import heroImg from '../../assets/hero.png';
 
-function HeroSection({ profile }) {
+function HeroSection({ profile, isLoading = false }) {
+    if (isLoading || !profile) {
+        return <HeroSkeleton />;
+    }
     return (
         <div className="portfolio-container pt-10 pb-8 space-y-6">
             {/* Avatar thumbnail */}
@@ -23,9 +27,6 @@ function HeroSection({ profile }) {
                         className="w-full h-full object-cover grayscale contrast-110"
                     />
                 )}
-                <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gray-100 text-gray-500 font-bold text-lg">
-                    {profile?.full_name?.charAt(0) || 'A'}
-                </div>
             </div>
 
             <div className="badge-available">
@@ -35,18 +36,18 @@ function HeroSection({ profile }) {
 
             <div className="space-y-2">
                 <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-gray-900 tracking-tight leading-tight">
-                    Hey, I'm {profile?.full_name || 'Arken'}. <br />
+                    Hey, I'm {profile.full_name}. <br />
                     <span className="inline-flex items-center gap-2">
                         <span>Dreamer &amp;</span>
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800">
                             <IconCode className="w-3.5 h-3.5 text-gray-700" />
-                            <span>{profile?.role || 'Developer'}</span>
+                            <span>{profile.role}</span>
                         </span>
                     </span>
                 </h1>
 
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-xl pt-1">
-                    {profile?.bio_text || 'Crafting seamless experiences and robust systems. Computer Science student by day, creative thinker and aspiring innovator by night.'}
+                    {profile.bio_text}
                 </p>
             </div>
 

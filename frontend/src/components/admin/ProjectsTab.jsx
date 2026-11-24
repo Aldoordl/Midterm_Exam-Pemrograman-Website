@@ -3,6 +3,7 @@ import { projectService } from '../../services';
 import { IconEdit, IconTrash, IconFolder, IconFolderCheck } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
 import AlertBanner from '../AlertBanner';
+import MarkdownRenderer from '../MarkdownRenderer';
 
 function ProjectsTab({ projects, token, onRefresh }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -10,6 +11,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
     const [isSaving, setIsSaving] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
     const [deleteTargetId, setDeleteTargetId] = useState(null);
+    const [contentTab, setContentTab] = useState('write'); // 'write' | 'preview'
 
     const initialFormState = {
         title: '',
@@ -234,16 +236,55 @@ function ProjectsTab({ projects, token, onRefresh }) {
                         ></textarea>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="block text-[11px] font-medium text-gray-700">Full Content / Story</label>
-                        <textarea
-                            name="content"
-                            rows={4}
-                            value={formData.content}
-                            onChange={handleInputChange}
-                            placeholder="Detailed project story, key features, and technical solutions..."
-                            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-xs focus:border-black outline-none transition-all resize-none"
-                        ></textarea>
+                    <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <label className="block text-[11px] font-medium text-gray-700">
+                                Full Content / Story (Markdown Supported)
+                            </label>
+                            {/* Segmented Write / Preview Tab */}
+                            <div className="flex items-center gap-1 p-0.5 bg-gray-100 rounded-lg border border-gray-200/80 text-[10px] font-semibold">
+                                <button
+                                    type="button"
+                                    onClick={() => setContentTab('write')}
+                                    className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                                        contentTab === 'write'
+                                            ? 'bg-white text-gray-900 shadow-2xs'
+                                            : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                                >
+                                    Write
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setContentTab('preview')}
+                                    className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                                        contentTab === 'preview'
+                                            ? 'bg-white text-gray-900 shadow-2xs'
+                                            : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                                >
+                                    <span>Preview</span>
+                                    {formData.content && (
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        {contentTab === 'write' ? (
+                            <textarea
+                                name="content"
+                                rows={6}
+                                value={formData.content}
+                                onChange={handleInputChange}
+                                placeholder="Write project story using Markdown (e.g. ## Overview, - Feature 1, **bold**, `code`)..."
+                                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 font-mono text-xs focus:border-black outline-none transition-all resize-y min-h-32"
+                            ></textarea>
+                        ) : (
+                            <div className="min-h-32 p-4 rounded-lg border border-dashed border-gray-200 bg-gray-50/50 max-h-96 overflow-y-auto">
+                                <MarkdownRenderer content={formData.content} />
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center justify-between pt-1">

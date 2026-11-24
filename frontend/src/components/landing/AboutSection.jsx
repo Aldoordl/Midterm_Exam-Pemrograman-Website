@@ -1,4 +1,4 @@
-function AboutSection({ profile }) {
+function AboutSection({ profile, isLoading = false }) {
     return (
         <div className="relative border-b border-gray-100">
             <div className="portfolio-container py-12 space-y-6">
@@ -6,12 +6,23 @@ function AboutSection({ profile }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     <div className="md:col-span-7 space-y-4 text-sm text-gray-600 leading-relaxed">
-                        <p>
-                            I'm {profile?.full_name || 'Arken'}, a curious developer, coder, and creative thinker. Currently a computer science student at Universitas Amikom Yogyakarta, always exploring the limitless possibilities of software engineering and clean interface design.
-                        </p>
-                        <p className="italic text-gray-700 border-l-2 border-gray-300 pl-4 py-1">
-                            "I thrive on transforming ideas into reality, whether it's crafting digital interfaces, designing clean RESTful APIs, or building websites that feel effortless to use."
-                        </p>
+                        {isLoading || !profile ? (
+                            <div className="space-y-3">
+                                <div className="w-full h-4 bg-gray-100 rounded animate-pulse"></div>
+                                <div className="w-5/6 h-4 bg-gray-100 rounded animate-pulse"></div>
+                                <div className="w-4/5 h-4 bg-gray-100 rounded animate-pulse"></div>
+                                <div className="w-3/4 h-4 bg-gray-100 rounded animate-pulse pt-2"></div>
+                            </div>
+                        ) : (
+                            <>
+                                <p>
+                                    I'm {profile.full_name}, a curious developer, coder, and creative thinker. Currently a computer science student at Universitas Amikom Yogyakarta, always exploring the limitless possibilities of software engineering and clean interface design.
+                                </p>
+                                <p className="italic text-gray-700 border-l-2 border-gray-300 pl-4 py-1">
+                                    "I thrive on transforming ideas into reality, whether it's crafting digital interfaces, designing clean RESTful APIs, or building websites that feel effortless to use."
+                                </p>
+                            </>
+                        )}
                     </div>
 
                     <div className="md:col-span-5 relative flex justify-center py-4">

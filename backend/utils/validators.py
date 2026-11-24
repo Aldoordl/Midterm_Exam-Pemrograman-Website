@@ -86,10 +86,35 @@ class ProfileSchema(BaseModel):
     avatar_url: Optional[str] = Field(default="")
 
 
+# Human-friendly field name mapping for clean UI error messages
+FIELD_NAMES = {
+    'sender_name': 'Name',
+    'sender_email': 'Email',
+    'message_body': 'Message',
+    'title': 'Title',
+    'slug': 'Slug',
+    'short_description': 'Short description',
+    'content': 'Content',
+    'tech_stack': 'Tech stack',
+    'image_url': 'Image URL',
+    'github_url': 'GitHub URL',
+    'live_url': 'Live URL',
+    'category': 'Category',
+    'organization': 'Organization',
+    'period': 'Period',
+    'badge_label': 'Badge label',
+    'badge_color': 'Badge color',
+    'full_name': 'Full name',
+    'role': 'Role',
+    'bio_text': 'Bio',
+    'resume_url': 'Resume URL',
+    'avatar_url': 'Avatar URL'
+}
+
 def validate_payload(schema_cls, data: dict):
     """
     Validates a dictionary against a Pydantic schema class.
-    Returns: (cleaned_dict, error_message_or_None)
+    Returns clean, natural, user-friendly error messages without technical jargon.
     """
     try:
         instance = schema_cls.model_validate(data)
@@ -98,10 +123,34 @@ def validate_payload(schema_cls, data: dict):
         return cleaned, None
     except Exception as e:
         if hasattr(e, 'errors'):
-            errs = e.errors()
-            field = ".".join(str(loc) for loc in errs[0].get('loc', []))
-            msg = errs[0].get('msg', 'Invalid data format')
-            if msg.startswith('Value error, '):
-                msg = msg.replace('Value error, ', '')
-            return None, f"Validation failed on '{field}': {msg}"
+            err = e.errors()[0]
+            raw_field = str(err.get('loc', [''])[0]) if err.get('loc') else ''
+            field_name = FIELD_NAMES.get(raw_field, raw_field.replace('_', ' ').capitalize())
+            err_type = err.get('type', '')
+            ctx = err.get('ctx', {})
+            msg = err.get('msg', 'Invalid data format')
+
+            # 1. Custom validation messages from @field_validator
+            if err_type == 'value_error' or msg.startswith('Value error, '):
+                return None, msg.replace('Value error, ', '').strip()
+
+            # 2. Missing required field
+            if err_type == 'missing':
+                return None, f"{field_name} is required."
+
+            # 3. String too short
+            if err_type == 'string_too_short':
+                min_len = ctx.get('min_length', '')
+                return None, f"{field_name} must be at least {min_len} characters long."
+
+            # 4. String too long
+            if err_type == 'string_too_long':
+                max_len = ctx.get('max_length', '')
+                return None, f"{field_name} cannot exceed {max_len} characters."
+
+            # Fallback
+            if field_name:
+                return None, f"{field_name}: {msg}"
+            return None, msg
+
         return None, str(e)

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { projectService } from '../services';
 import NotFound from './NotFound';
+import { ProjectDetailSkeleton } from '../components/SkeletonBlueprint';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 import {
     IconArrowUpRight,
     IconGithub,
@@ -34,14 +36,7 @@ function ProjectDetail() {
     }, [slug]);
 
     if (isLoading) {
-        return (
-            <div className="py-12">
-                <div className="architect-frame py-24 text-center">
-                    <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-3"></div>
-                    <p className="text-xs text-gray-400 font-mono">Loading project data...</p>
-                </div>
-            </div>
-        );
+        return <ProjectDetailSkeleton />;
     }
 
     // Jika slug tidak valid atau proyek tidak ditemukan, tampilkan halaman 404 yang konsisten
@@ -150,9 +145,9 @@ function ProjectDetail() {
                         </div>
                     )}
 
-                    {/* Content Body */}
-                    <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap pt-4 border-t border-gray-100">
-                        {project.content}
+                    {/* Content Body (Rendered with Markdown) */}
+                    <div className="pt-4 border-t border-gray-100">
+                        <MarkdownRenderer content={project.content} />
                     </div>
 
                     {/* Bottom Nav */}
