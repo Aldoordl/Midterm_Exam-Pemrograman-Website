@@ -1,142 +1,173 @@
 # 🏗️ Portfolio Web — Full-Stack Personal Portfolio
 
-> Aplikasi web portofolio personal full-stack dengan **React** (frontend) dan **Flask** (backend), menggunakan **Supabase** sebagai database & autentikasi. Dibangun untuk UTS mata kuliah Pemrograman Web Semester 3.
+> A full-stack personal portfolio web application built with **React** (frontend) and **Flask** (backend), powered by **Supabase** for database & authentication.
 
 ---
 
-## 📋 Deskripsi Proyek
+## 📋 Project Description
 
-Proyek ini adalah sebuah website portofolio personal yang memungkinkan pemiliknya menampilkan profil, daftar proyek, riwayat pendidikan/kerja/sertifikasi (resume), serta menerima pesan dari pengunjung. Aplikasi terbagi menjadi dua bagian utama:
+This is a personal portfolio website that allows the owner to showcase their profile, project catalog, resume history (education, work experience, certifications), and receive messages from visitors. The application is divided into two main parts:
 
-### 🌐 Halaman Publik (Pengunjung)
-| Halaman | Deskripsi |
+### 🌐 Public Pages (Visitors)
+| Page | Description |
 |---|---|
-| **Landing Page** (`/`) | Hero section, marquee gallery, about, journey (pendidikan, pengalaman kerja, sertifikasi), daftar proyek, layanan, testimoni, dan CTA |
-| **Detail Proyek** (`/project/:slug`) | Halaman detail dari setiap proyek berdasarkan slug |
-| **Contact** (`/contact`) | Form kontak untuk mengirim pesan langsung ke pemilik portofolio |
+| **Landing Page** (`/`) | Hero section, marquee gallery, about, journey (education, work experience, certifications), project list, services, testimonials, and CTA |
+| **Project Detail** (`/project/:slug`) | Detailed view of each project by slug |
+| **Contact** (`/contact`) | Contact form to send direct messages to the portfolio owner |
+| **404 Not Found** (`/*`) | Catch-all page for undefined routes |
 
-### 🔒 Dashboard Admin (Terproteksi)
-| Halaman | Deskripsi |
+### 🔒 Admin Dashboard (Protected)
+| Page | Description |
 |---|---|
-| **Login** (`/login`) | Autentikasi admin via email & password (Supabase Auth + JWT) |
-| **Admin Dashboard** (`/admin/dashboard`) | Panel CRUD untuk mengelola Projects, Resume/Journey, Profile, dan Messages |
+| **Login** (`/login`) | Admin authentication via email & password (Supabase Auth + JWT) |
+| **Admin Dashboard** (`/admin/dashboard`) | CRUD panel to manage Projects, Resume/Journey, Profile, and Messages |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Teknologi |
+| Layer | Technology |
 |---|---|
 | **Frontend** | React 19, React Router v7, Vite, Tailwind CSS v4, Axios |
 | **Backend** | Python, Flask, Flask-RESTful, Flask-CORS, Flasgger (Swagger UI) |
 | **Database & Auth** | Supabase (PostgreSQL + Auth) |
-| **Autentikasi API** | JWT (PyJWT) — Token berlaku 7 hari |
-| **Deployment** | Frontend: Vercel · Backend: (Gunicorn-ready) |
+| **Data Validation** | Pydantic v2 (backend) |
+| **API Authentication** | JWT (PyJWT) — Token valid for 7 days |
+| **Deployment** | Frontend: Vercel · Backend: Gunicorn-ready |
 
 ---
 
-## 📁 Struktur Proyek
+## 📁 Project Structure
 
 ```
 UTS-Pemweb/
 ├── backend/
-│   ├── app.py              # Entry point Flask — semua resource & routing API
-│   ├── requirements.txt    # Dependensi Python
-│   ├── .env                # Variabel lingkungan (rahasia, tidak di-commit)
-│   └── .example.env        # Contoh variabel lingkungan
+│   ├── middleware/           # Middleware / decorators
+│   │   ├── auth.py           # JWT token verification decorator
+│   │   └── rate_limit.py     # Sliding window rate limiter per IP
+│   ├── resources/            # Flask-RESTful resource classes (endpoint handlers)
+│   │   ├── auth.py           # Login endpoint
+│   │   ├── messages.py       # Public & admin messages CRUD
+│   │   ├── profile.py        # Public & admin profile
+│   │   ├── projects.py       # Public & admin projects CRUD
+│   │   └── resume.py         # Public & admin resume CRUD
+│   ├── utils/                # Helper modules
+│   │   ├── responses.py      # Standardized response format (success/error envelope)
+│   │   └── validators.py     # Pydantic schemas & input validation
+│   ├── app.py                # Flask entry point — initialization & route registration
+│   ├── config.py             # Env config, Supabase client, Swagger template
+│   ├── requirements.txt      # Python dependencies
+│   └── .example.env          # Example environment variables
 │
 ├── frontend/
-│   ├── public/             # Aset statis (favicon, icons)
+│   ├── public/               # Static assets (favicon, icons)
 │   ├── src/
-│   │   ├── assets/         # Gambar (hero, logo)
-│   │   ├── components/     # Komponen reusable (Navbar, Footer, Icons, dll.)
-│   │   │   ├── admin/      # Komponen tab admin (ProjectsTab, ResumeTab, dll.)
-│   │   │   └── landing/    # Komponen section landing (HeroSection, dll.)
-│   │   ├── data/           # Mock data fallback
-│   │   ├── pages/          # Halaman utama
-│   │   │   ├── admin/      # AdminDashboard.jsx
-│   │   │   ├── auth/       # Login.jsx
-│   │   │   ├── Landing.jsx
+│   │   ├── assets/           # Images (hero, logo)
+│   │   ├── components/       # Reusable components
+│   │   │   ├── admin/        # Admin tabs (ProjectsTab, ResumeTab, ProfileTab, MessagesTab)
+│   │   │   ├── landing/      # Landing sections (Hero, About, Journey, Projects, etc.)
+│   │   │   ├── AlertBanner.jsx
+│   │   │   ├── ConfirmModal.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Icons.jsx
+│   │   │   ├── MarkdownRenderer.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── ProtectedRoute.jsx
+│   │   │   ├── ScrollToTop.jsx
+│   │   │   └── SkeletonBlueprint.jsx
+│   │   ├── data/             # Fallback mock data
+│   │   ├── pages/            # Main pages
+│   │   │   ├── admin/        # AdminDashboard.jsx
+│   │   │   ├── auth/         # Login.jsx
 │   │   │   ├── Contact.jsx
+│   │   │   ├── Landing.jsx
+│   │   │   ├── NotFound.jsx
 │   │   │   └── ProjectDetail.jsx
-│   │   ├── App.jsx         # Router utama & axios interceptor
-│   │   ├── main.jsx        # Entry point React
-│   │   └── index.css       # Global styles
+│   │   ├── services/         # API service layer (axios abstraction)
+│   │   │   ├── apiClient.js  # Axios instance + interceptors (auth & 401 handler)
+│   │   │   ├── authService.js
+│   │   │   ├── messageService.js
+│   │   │   ├── profileService.js
+│   │   │   ├── projectService.js
+│   │   │   ├── resumeService.js
+│   │   │   └── index.js      # Barrel export
+│   │   ├── App.jsx           # Main router & global interceptor
+│   │   ├── main.jsx          # React entry point
+│   │   └── index.css         # Global styles
 │   ├── package.json
 │   ├── vite.config.js
 │   ├── tailwind.config.js
-│   ├── vercel.json         # Konfigurasi deployment Vercel (SPA rewrite + security headers)
-│   ├── .env                # Variabel lingkungan frontend
-│   └── .example.env        # Contoh variabel lingkungan
+│   ├── vercel.json           # Vercel deployment config (SPA rewrite + security headers)
+│   └── .example.env          # Example environment variables
 │
 ├── .gitignore
-└── README.md               # ← Anda di sini
+└── README.md                 # ← You are here
 ```
 
 ---
 
 ## 🔌 REST API Endpoints
 
-### Publik (Tanpa Autentikasi)
-| Method | Endpoint | Deskripsi |
+### Public (No Authentication Required)
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/profile` | Ambil data profil |
-| `GET` | `/api/projects` | Daftar proyek yang dipublikasikan |
-| `GET` | `/api/projects/<slug>` | Detail proyek berdasarkan slug |
-| `POST` | `/api/messages` | Kirim pesan dari pengunjung |
-| `GET` | `/api/resume` | Daftar riwayat (pendidikan, kerja, sertifikasi) |
+| `GET` | `/api/profile` | Retrieve profile data |
+| `GET` | `/api/projects` | List published projects |
+| `GET` | `/api/projects/<slug>` | Project detail by slug |
+| `POST` | `/api/messages` | Send a message from visitor (rate-limited) |
+| `GET` | `/api/resume` | List resume items (education, work, certifications) |
 
-### Admin (Memerlukan JWT Bearer Token)
-| Method | Endpoint | Deskripsi |
+### Admin (JWT Bearer Token Required)
+| Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/login` | Login admin → dapatkan token JWT |
-| `POST` | `/api/admin/profile` | Buat/perbarui profil |
-| `GET` | `/api/admin/projects` | Semua proyek (termasuk draft) |
-| `POST` | `/api/admin/projects` | Tambah proyek baru |
-| `PUT` | `/api/admin/projects/<id>` | Edit proyek |
-| `DELETE` | `/api/admin/projects/<id>` | Hapus proyek |
-| `GET` | `/api/admin/messages` | Daftar pesan masuk |
-| `PUT` | `/api/admin/messages/<id>` | Update status baca pesan |
-| `DELETE` | `/api/admin/messages/<id>` | Hapus pesan |
-| `POST` | `/api/admin/resume` | Tambah riwayat baru |
-| `PUT` | `/api/admin/resume/<id>` | Edit riwayat |
-| `DELETE` | `/api/admin/resume/<id>` | Hapus riwayat |
+| `POST` | `/api/login` | Admin login → receive JWT token |
+| `POST` | `/api/admin/profile` | Create/update profile |
+| `GET` | `/api/admin/projects` | All projects (including drafts) |
+| `POST` | `/api/admin/projects` | Add new project |
+| `PUT` | `/api/admin/projects/<id>` | Edit project |
+| `DELETE` | `/api/admin/projects/<id>` | Delete project |
+| `GET` | `/api/admin/messages` | List incoming messages |
+| `PUT` | `/api/admin/messages/<id>` | Update message read status |
+| `DELETE` | `/api/admin/messages/<id>` | Delete message |
+| `POST` | `/api/admin/resume` | Add new resume item |
+| `PUT` | `/api/admin/resume/<id>` | Edit resume item |
+| `DELETE` | `/api/admin/resume/<id>` | Delete resume item |
 
-> 📖 Dokumentasi interaktif Swagger UI tersedia di `http://localhost:5000/apidocs` saat backend berjalan.
+> 📖 Interactive Swagger UI documentation is available at `http://localhost:5000/apidocs` when the backend is running.
 
 ---
 
-## 🚀 Instalasi & Menjalankan Secara Lokal
+## 🚀 Installation & Running Locally
 
-### Prasyarat
+### Prerequisites
 
-Pastikan sudah terinstal di komputer Anda:
+Make sure the following are installed on your machine:
 - **Python** ≥ 3.10 — [Download](https://www.python.org/downloads/)
-- **Node.js** ≥ 18 (atau **Bun**) — [Download Node](https://nodejs.org/) / [Download Bun](https://bun.sh/)
+- **Node.js** ≥ 18 (or **Bun**) — [Download Node](https://nodejs.org/) / [Download Bun](https://bun.sh/)
 - **Git** — [Download](https://git-scm.com/)
-- Akun **Supabase** (gratis) — [supabase.com](https://supabase.com/)
+- **Supabase** account (free) — [supabase.com](https://supabase.com/)
 
 ---
 
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone <URL_REPOSITORY>
+git clone <REPOSITORY_URL>
 cd UTS-Pemweb
 ```
 
 ---
 
-### 2️⃣ Setup Backend (Flask)
+### 2️⃣ Backend Setup (Flask)
 
 ```bash
-# Masuk ke folder backend
+# Navigate to the backend folder
 cd backend
 
-# Buat virtual environment
+# Create a virtual environment
 python -m venv venv
 
-# Aktifkan virtual environment
+# Activate the virtual environment
 # Windows (CMD):
 venv\Scripts\activate
 # Windows (PowerShell):
@@ -144,20 +175,20 @@ venv\Scripts\activate
 # macOS / Linux:
 source venv/bin/activate
 
-# Install dependensi
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-#### Konfigurasi Environment Backend
+#### Backend Environment Configuration
 
-Salin file contoh dan isi dengan kredensial Supabase Anda:
+Copy the example file and fill in your Supabase credentials:
 
 ```bash
 copy .example.env .env     # Windows
 # cp .example.env .env     # macOS / Linux
 ```
 
-Edit file `backend/.env`:
+Edit `backend/.env`:
 
 ```env
 SUPABASE_URL=https://your-project-id.supabase.co
@@ -166,89 +197,91 @@ SECRET_KEY="your_random_secret_key_for_jwt"
 FRONTEND_URL=http://localhost:5173
 ```
 
-> **Catatan:** `SUPABASE_URL` dan `SUPABASE_KEY` bisa didapatkan dari **Supabase Dashboard** → **Settings** → **API**.
+> **Note:** `SUPABASE_URL` and `SUPABASE_KEY` can be obtained from **Supabase Dashboard** → **Settings** → **API**.
 
-#### Jalankan Backend
+#### Run Backend
 
 ```bash
 python app.py
 ```
 
-Backend akan berjalan di **`http://127.0.0.1:5000`**.
+The backend will be running at **`http://127.0.0.1:5000`**.
 
 ---
 
-### 3️⃣ Setup Frontend (React + Vite)
+### 3️⃣ Frontend Setup (React + Vite)
 
-Buka terminal **baru** (biarkan backend tetap berjalan):
+Open a **new terminal** (keep the backend running):
 
 ```bash
-# Masuk ke folder frontend
+# Navigate to the frontend folder
 cd frontend
 
-# Install dependensi (pilih salah satu)
+# Install dependencies (choose one)
 npm install
-# atau
+# or
 bun install
 ```
 
-#### Konfigurasi Environment Frontend
+#### Frontend Environment Configuration
 
-Salin file contoh dan isi:
+Copy the example file and fill it in:
 
 ```bash
 copy .example.env .env     # Windows
 # cp .example.env .env     # macOS / Linux
 ```
 
-Edit file `frontend/.env`:
+Edit `frontend/.env`:
 
 ```env
 VITE_API_URL=http://127.0.0.1:5000
 ```
 
-#### Jalankan Frontend
+#### Run Frontend
 
 ```bash
 npm run dev
-# atau
+# or
 bun dev
 ```
 
-Frontend akan berjalan di **`http://localhost:5173`**.
+The frontend will be running at **`http://localhost:5173`**.
 
 ---
 
-### 4️⃣ Setup Database (Supabase)
+### 4️⃣ Database Setup (Supabase)
 
-Buat tabel-tabel berikut di Supabase SQL Editor:
+Create the following tables in Supabase SQL Editor:
 
 ```sql
--- Tabel Profil
+-- Profiles Table
 CREATE TABLE profiles (
     id BIGINT PRIMARY KEY,
     full_name TEXT,
     role TEXT,
     bio_text TEXT,
+    resume_url TEXT,
     avatar_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Tabel Proyek
+-- Projects Table
 CREATE TABLE projects (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     title TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
-    description TEXT,
+    short_description TEXT,
+    content TEXT,
     image_url TEXT,
     tech_stack TEXT[],
+    github_url TEXT,
     live_url TEXT,
-    repo_url TEXT,
     is_published BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Tabel Pesan
+-- Messages Table
 CREATE TABLE messages (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     sender_name TEXT NOT NULL,
@@ -258,28 +291,29 @@ CREATE TABLE messages (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Tabel Resume / Riwayat
+-- Resume Items Table
 CREATE TABLE resume_items (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    category TEXT NOT NULL,         -- 'education', 'work', 'certification'
+    category TEXT NOT NULL,         -- 'education', 'work', 'certification', 'organization'
     title TEXT NOT NULL,
-    institution TEXT,
+    organization TEXT,
+    period TEXT,
     description TEXT,
-    start_date TEXT,
-    end_date TEXT,
+    badge_label TEXT,
+    badge_color TEXT DEFAULT 'blue',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
-> ⚠️ Pastikan **Row Level Security (RLS)** dikonfigurasi sesuai kebutuhan agar endpoint publik bisa membaca data dan endpoint admin bisa menulis data.
+> ⚠️ Make sure **Row Level Security (RLS)** is configured accordingly so public endpoints can read data and admin endpoints can write data.
 
 ---
 
-## ✅ Verifikasi
+## ✅ Verification
 
-Setelah semua berjalan, buka browser:
+Once everything is running, open your browser:
 
-| Layanan | URL |
+| Service | URL |
 |---|---|
 | **Frontend** | [http://localhost:5173](http://localhost:5173) |
 | **Backend API** | [http://127.0.0.1:5000](http://127.0.0.1:5000) |
@@ -287,6 +321,6 @@ Setelah semua berjalan, buka browser:
 
 ---
 
-## 📄 Lisensi
+## 📄 License
 
-Proyek ini dibuat untuk keperluan akademik (UTS Pemrograman Web — Semester 3). Setelah penilaian berakhir akan kembali di private.
+This project is proprietary and intended for personal use only.
