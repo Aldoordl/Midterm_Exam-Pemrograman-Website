@@ -60,17 +60,17 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
             if (isEditingResume) {
                 const res = await resumeService.update(resumeEditId, resumeForm);
                 if (res.data?.status === 'error') {
-                    setStatus({ type: 'error', message: res.data?.message || 'Gagal memperbarui riwayat resume.' });
+                    setStatus({ type: 'error', message: res.data?.message || 'Failed to update resume item.' });
                     return;
                 }
-                setStatus({ type: 'success', message: 'Riwayat resume berhasil diperbarui!' });
+                setStatus({ type: 'success', message: 'Resume item updated successfully!' });
             } else {
                 const res = await resumeService.create(resumeForm);
                 if (res.data?.status === 'error') {
-                    setStatus({ type: 'error', message: res.data?.message || 'Gagal menambahkan riwayat resume.' });
+                    setStatus({ type: 'error', message: res.data?.message || 'Failed to add resume item.' });
                     return;
                 }
-                setStatus({ type: 'success', message: 'Riwayat resume baru berhasil ditambahkan!' });
+                setStatus({ type: 'success', message: 'New resume item added successfully!' });
             }
             setResumeForm(initialResumeForm);
             setIsEditingResume(false);
@@ -79,7 +79,7 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
         } catch (err) {
             setStatus({
                 type: 'error',
-                message: err.response?.data?.message || 'Gagal menyimpan riwayat resume ke server.'
+                message: err.response?.data?.message || 'Failed to save resume item to server.'
             });
         } finally {
             setIsSaving(false);
@@ -90,12 +90,12 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
         if (!deleteTargetId) return;
         try {
             await resumeService.delete(deleteTargetId);
-            setStatus({ type: 'success', message: 'Item resume berhasil dihapus.' });
+            setStatus({ type: 'success', message: 'Resume item deleted successfully.' });
             if (onRefresh) onRefresh();
         } catch (err) {
             setStatus({
                 type: 'error',
-                message: err.response?.data?.message || err.message || 'Gagal menghapus riwayat resume.'
+                message: err.response?.data?.message || err.message || 'Failed to delete resume item.'
             });
         } finally {
             setDeleteTargetId(null);
@@ -113,7 +113,7 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
                             <span>{isEditingResume ? "Edit Resume Item" : "Add Resume Item"}</span>
                         </h2>
                         <p className="text-[11px] text-gray-500">
-                            Kelola riwayat pendidikan, pekerjaan &amp; aktivitas, serta sertifikasi ke tabel database.
+                            Manage education, career, and certification records in the database.
                         </p>
                     </div>
                     {isEditingResume && (
@@ -351,8 +351,8 @@ function ResumeTab({ resumeItems, token, onRefresh }) {
             {/* Confirmation Modal */}
             <ConfirmModal
                 isOpen={!!deleteTargetId}
-                title="Hapus Riwayat Resume"
-                message="Apakah Anda yakin ingin menghapus data riwayat ini? Data akan dihapus secara permanen dari database."
+                title="Delete Resume Item"
+                message="Are you sure you want to delete this resume item? It will be permanently removed from the database."
                 onConfirm={confirmDeleteResume}
                 onCancel={() => setDeleteTargetId(null)}
             />

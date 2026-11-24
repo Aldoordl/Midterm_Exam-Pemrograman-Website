@@ -71,17 +71,17 @@ function ProjectsTab({ projects, token, onRefresh }) {
             if (isEditing) {
                 const response = await projectService.update(editId, payload);
                 if (response.data?.status === 'error') {
-                    setStatus({ type: 'error', message: response.data?.message || 'Gagal memperbarui proyek.' });
+                    setStatus({ type: 'error', message: response.data?.message || 'Failed to update project.' });
                     return;
                 }
-                setStatus({ type: 'success', message: 'Proyek berhasil diperbarui!' });
+                setStatus({ type: 'success', message: 'Project updated successfully!' });
             } else {
                 const response = await projectService.create(payload);
                 if (response.data?.status === 'error') {
-                    setStatus({ type: 'error', message: response.data?.message || 'Gagal menambahkan proyek.' });
+                    setStatus({ type: 'error', message: response.data?.message || 'Failed to add project.' });
                     return;
                 }
-                setStatus({ type: 'success', message: 'Proyek baru berhasil ditambahkan!' });
+                setStatus({ type: 'success', message: 'New project added successfully!' });
             }
 
             setFormData(initialFormState);
@@ -91,7 +91,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
         } catch (error) {
             setStatus({
                 type: 'error',
-                message: error.response?.data?.message || 'Gagal menyimpan proyek.'
+                message: error.response?.data?.message || 'Failed to save project.'
             });
         } finally {
             setIsSaving(false);
@@ -102,12 +102,12 @@ function ProjectsTab({ projects, token, onRefresh }) {
         if (!deleteTargetId) return;
         try {
             await projectService.delete(deleteTargetId);
-            setStatus({ type: 'success', message: 'Proyek berhasil dihapus.' });
+            setStatus({ type: 'success', message: 'Project deleted successfully.' });
             if (onRefresh) onRefresh();
         } catch (error) {
             setStatus({
                 type: 'error',
-                message: error.response?.data?.message || error.message || 'Gagal menghapus proyek.'
+                message: error.response?.data?.message || error.message || 'Failed to delete project.'
             });
         } finally {
             setDeleteTargetId(null);
@@ -125,7 +125,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
                             <span>{isEditing ? "Edit Project" : "Add New Project"}</span>
                         </h2>
                         <p className="text-[11px] text-gray-500">
-                            Kelola portofolio proyek yang akan dipublikasikan ke halaman utama.
+                            Manage the project portfolio to be published on the main page.
                         </p>
                     </div>
                     {isEditing && (
@@ -229,7 +229,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
                             rows={2}
                             value={formData.short_description}
                             onChange={handleInputChange}
-                            placeholder="Ringkasan singkat proyek yang tampil di card..."
+                            placeholder="Brief project summary displayed on the card..."
                             className="w-full px-3 py-2 rounded-lg border border-gray-200 text-xs focus:border-black outline-none transition-all resize-none"
                         ></textarea>
                     </div>
@@ -241,7 +241,7 @@ function ProjectsTab({ projects, token, onRefresh }) {
                             rows={4}
                             value={formData.content}
                             onChange={handleInputChange}
-                            placeholder="Detail penjelasan proyek, fitur utama, dan solusi teknis..."
+                            placeholder="Detailed project story, key features, and technical solutions..."
                             className="w-full px-3 py-2 rounded-lg border border-gray-200 text-xs focus:border-black outline-none transition-all resize-none"
                         ></textarea>
                     </div>
@@ -322,8 +322,8 @@ function ProjectsTab({ projects, token, onRefresh }) {
             {/* Confirmation Modal */}
             <ConfirmModal
                 isOpen={!!deleteTargetId}
-                title="Hapus Proyek"
-                message="Apakah Anda yakin ingin menghapus proyek ini? Proyek akan dihapus secara permanen dari portofolio."
+                title="Delete Project"
+                message="Are you sure you want to delete this project? It will be permanently removed from your portfolio."
                 onConfirm={confirmDeleteProject}
                 onCancel={() => setDeleteTargetId(null)}
             />

@@ -18,7 +18,7 @@ class PublicResume(Resource):
         """
         try:
             response = supabase.table('resume_items').select('*').order('created_at', desc=True).execute()
-            return success_response(data=response.data, message="Riwayat resume berhasil diambil")
+            return success_response(data=response.data, message="Resume items fetched successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -49,7 +49,7 @@ class AdminResumeList(Resource):
                 return error_response(error_msg, 400)
 
             response = supabase.table('resume_items').insert(cleaned_data).execute()
-            return success_response(data=response.data, message="Riwayat resume berhasil ditambahkan", code=201)
+            return success_response(data=response.data, message="Resume item added successfully", code=201)
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -84,7 +84,7 @@ class AdminResumeDetail(Resource):
                 return error_response(error_msg, 400)
 
             response = supabase.table('resume_items').update(cleaned_data).eq('id', id).execute()
-            return success_response(data=response.data, message="Riwayat resume berhasil diperbarui")
+            return success_response(data=response.data, message="Resume item updated successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -107,6 +107,6 @@ class AdminResumeDetail(Resource):
         """
         try:
             response = supabase.table('resume_items').delete().eq('id', id).execute()
-            return success_response(data=response.data, message="Riwayat resume berhasil dihapus")
+            return success_response(data=response.data, message="Resume item deleted successfully")
         except Exception as e:
             return error_response(str(e), 500)

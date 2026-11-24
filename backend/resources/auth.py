@@ -34,7 +34,7 @@ class AuthLogin(Resource):
         password = data.get('password')
 
         if not email or not password:
-            return error_response("Email dan password wajib diisi", 400)
+            return error_response("Email and password are required", 400)
 
         try:
             supabase.auth.sign_in_with_password({"email": email, "password": password})
@@ -51,7 +51,7 @@ class AuthLogin(Resource):
             # Mengembalikan format standar dengan backward compatibility (token level atas)
             return success_response(
                 data=token_data,
-                message="Login berhasil",
+                message="Login successful",
                 token=token,
                 expires_in="7 days"
             )

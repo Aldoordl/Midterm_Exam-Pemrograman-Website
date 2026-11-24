@@ -18,7 +18,7 @@ class PublicProjectList(Resource):
         """
         try:
             response = supabase.table('projects').select('*').eq('is_published', True).order('created_at', desc=True).execute()
-            return success_response(data=response.data, message="Daftar proyek berhasil diambil")
+            return success_response(data=response.data, message="Project list fetched successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -41,8 +41,8 @@ class PublicProjectDetail(Resource):
         try:
             response = supabase.table('projects').select('*').eq('slug', slug).execute()
             if not response.data:
-                return error_response("Proyek tidak ditemukan", 404)
-            return success_response(data=response.data[0], message="Detail proyek berhasil diambil")
+                return error_response("Project not found", 404)
+            return success_response(data=response.data[0], message="Project detail fetched successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -63,7 +63,7 @@ class AdminProjectList(Resource):
         """
         try:
             response = supabase.table('projects').select('*').order('created_at', desc=True).execute()
-            return success_response(data=response.data, message="Semua proyek berhasil diambil")
+            return success_response(data=response.data, message="All projects fetched successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -91,7 +91,7 @@ class AdminProjectList(Resource):
                 return error_response(error_msg, 400)
 
             response = supabase.table('projects').insert(cleaned_data).execute()
-            return success_response(data=response.data, message="Proyek berhasil ditambahkan", code=201)
+            return success_response(data=response.data, message="Project added successfully", code=201)
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -126,7 +126,7 @@ class AdminProjectDetail(Resource):
                 return error_response(error_msg, 400)
 
             response = supabase.table('projects').update(cleaned_data).eq('id', id).execute()
-            return success_response(data=response.data, message="Proyek berhasil diperbarui")
+            return success_response(data=response.data, message="Project updated successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -149,6 +149,6 @@ class AdminProjectDetail(Resource):
         """
         try:
             response = supabase.table('projects').delete().eq('id', id).execute()
-            return success_response(data=response.data, message="Proyek berhasil dihapus")
+            return success_response(data=response.data, message="Project deleted successfully")
         except Exception as e:
             return error_response(str(e), 500)

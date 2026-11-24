@@ -50,15 +50,15 @@ function ProfileTab({ initialProfile, token, onRefresh }) {
             const response = await profileService.updateAdmin(payload);
 
             if (response.data && response.data.status === 'success') {
-                setStatus({ type: 'success', message: 'Profil pengembang berhasil diperbarui!' });
+                setStatus({ type: 'success', message: 'Developer profile updated successfully!' });
                 if (onRefresh) onRefresh();
             } else {
-                setStatus({ type: 'error', message: response.data?.message || 'Gagal menyimpan profil.' });
+                setStatus({ type: 'error', message: response.data?.message || 'Failed to save profile.' });
             }
         } catch (error) {
             setStatus({
                 type: 'error',
-                message: error.response?.data?.message || 'Gagal menyimpan profil ke server.'
+                message: error.response?.data?.message || 'Failed to save profile to server.'
             });
         } finally {
             setIsSaving(false);
@@ -75,7 +75,7 @@ function ProfileTab({ initialProfile, token, onRefresh }) {
                             <span>Profile Settings</span>
                         </h2>
                         <p className="text-[11px] text-gray-500">
-                            Kelola profil publik pengembang yang ditampilkan pada halaman utama.
+                            Manage the public developer profile displayed on the main page.
                         </p>
                     </div>
                     <span className="text-[10px] font-mono text-gray-400">Profile Owner</span>

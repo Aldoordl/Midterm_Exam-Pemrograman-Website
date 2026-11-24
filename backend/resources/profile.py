@@ -19,8 +19,8 @@ class PublicProfile(Resource):
         try:
             response = supabase.table('profiles').select('*').eq('id', 1).execute()
             if not response.data:
-                return error_response("Data profil belum ditemukan", 404)
-            return success_response(data=response.data[0], message="Profil berhasil dimuat")
+                return error_response("Profile data not found", 404)
+            return success_response(data=response.data[0], message="Profile loaded successfully")
         except Exception as e:
             return error_response(str(e), 500)
 
@@ -52,6 +52,6 @@ class AdminProfile(Resource):
 
             cleaned_data['id'] = 1
             response = supabase.table('profiles').upsert(cleaned_data).execute()
-            return success_response(data=response.data, message="Profil berhasil diperbarui")
+            return success_response(data=response.data, message="Profile updated successfully")
         except Exception as e:
             return error_response(str(e), 500)
