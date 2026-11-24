@@ -1,23 +1,24 @@
 import { Link } from 'react-router-dom';
 import { IconGithub, IconExternalLink, IconArrowUpRight } from '../Icons';
+import { ProjectCardSkeleton } from '../SkeletonBlueprint';
 
 function ProjectsSection({ projects = [], isLoading = false }) {
     return (
         <div id="projects" className="relative border-b border-gray-100">
             <div className="portfolio-container py-12 space-y-8">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
                     <h2 className="text-xl font-bold text-gray-900 tracking-tight">
                         Here's What I've Been Up To
                     </h2>
-                    <span className="text-xs text-gray-400 font-mono">
-                        {projects.length} Selected Projects
+                    <span className="text-xs text-gray-400 font-mono whitespace-nowrap">
+                        {projects.length} {projects.length === 1 ? 'Selected Project' : 'Selected Projects'}
                     </span>
                 </div>
 
                 {isLoading ? (
-                    <div className="space-y-6">
+                    <div className="space-y-12">
                         {[1, 2].map((i) => (
-                            <div key={i} className="h-64 bg-gray-100 rounded-2xl animate-pulse"></div>
+                            <ProjectCardSkeleton key={i} />
                         ))}
                     </div>
                 ) : (

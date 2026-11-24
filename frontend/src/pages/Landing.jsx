@@ -9,6 +9,7 @@ import ServicesSection from '../components/landing/ServicesSection';
 import TestimonialsSection from '../components/landing/TestimonialsSection';
 import CtaSection from '../components/landing/CtaSection';
 import {
+    mockProfile,
     mockProjects,
     mockEducation,
     mockWorks,
@@ -41,11 +42,7 @@ function Home() {
                 }
             })
             .catch(() => {
-                setProfile({
-                    full_name: 'Arken',
-                    role: 'Developer & Designer',
-                    bio_text: 'Crafting seamless experiences and robust systems. Computer Science student by day, creative thinker and aspiring innovator by night.'
-                });
+                setProfile(mockProfile);
             });
 
         resumeService.getPublic()
@@ -59,7 +56,7 @@ function Home() {
             });
     }, []);
 
-    const displayProjects = projects.length > 0 ? projects : mockProjects;
+    const displayProjects = projects.length > 0 ? projects : (!isLoading ? mockProjects : []);
 
     const marqueeImages = [
         ...displayProjects.map(p => p.image_url).filter(Boolean),
@@ -71,9 +68,9 @@ function Home() {
     const apiWorks = resumeItems.filter(item => item.category === 'works' || item.category === 'work' || item.category === 'organization');
     const apiCerts = resumeItems.filter(item => item.category === 'certifications' || item.category === 'certification' || item.category === 'certificate');
 
-    const displayEducation = apiEducation.length > 0 ? apiEducation : mockEducation;
-    const displayWorks = apiWorks.length > 0 ? apiWorks : mockWorks;
-    const displayCerts = apiCerts.length > 0 ? apiCerts : mockCertifications;
+    const displayEducation = apiEducation.length > 0 ? apiEducation : (!isLoading ? mockEducation : []);
+    const displayWorks = apiWorks.length > 0 ? apiWorks : (!isLoading ? mockWorks : []);
+    const displayCerts = apiCerts.length > 0 ? apiCerts : (!isLoading ? mockCertifications : []);
 
     return (
         <div className="py-6">
@@ -94,19 +91,20 @@ function Home() {
                 </div>
 
                 {/* 1. Hero Section */}
-                <HeroSection profile={profile} />
+                <HeroSection profile={profile} isLoading={isLoading} />
 
                 {/* 2. Marquee Loop */}
-                <MarqueeSection images={marqueeImages} />
+                <MarqueeSection images={marqueeImages} isLoading={isLoading} />
 
                 {/* 3. About Section */}
-                <AboutSection profile={profile} />
+                <AboutSection profile={profile} isLoading={isLoading} />
 
                 {/* 4. Journey & Background */}
                 <JourneySection
                     education={displayEducation}
                     works={displayWorks}
                     certifications={displayCerts}
+                    isLoading={isLoading}
                 />
 
                 {/* 5. Projects Section */}

@@ -3,7 +3,7 @@ import { IconGithub, IconTwitter, IconMail, IconArrowUpRight } from './Icons';
 
 function Footer() {
     return (
-        <footer className="w-full pb-10">
+        <footer className="w-full">
             {/* Architect Frame for Footer */}
             <div className="architect-frame border-t border-gray-100">
                 <span className="crosshair -top-1.75 -left-1.75">+</span>

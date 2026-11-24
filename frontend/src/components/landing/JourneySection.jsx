@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { IconAcademic, IconBriefcase, IconAward } from '../Icons';
+import { JourneySkeleton } from '../SkeletonBlueprint';
 
-function JourneySection({ education = [], works = [], certifications = [] }) {
+function JourneySection({ education = [], works = [], certifications = [], isLoading = false }) {
     const [activeTab, setActiveTab] = useState('education');
 
     const getBadgeClass = (color) => {
@@ -66,7 +67,12 @@ function JourneySection({ education = [], works = [], certifications = [] }) {
                     </div>
                 </div>
 
-                {/* Tab 1: Education */}
+                {/* Content or Blueprint Skeleton Loading */}
+                {isLoading ? (
+                    <JourneySkeleton />
+                ) : (
+                    <>
+                        {/* Tab 1: Education */}
                 {activeTab === 'education' && (
                     <div className="space-y-3">
                         {education.map((item, idx) => (
@@ -174,6 +180,8 @@ function JourneySection({ education = [], works = [], certifications = [] }) {
                             </div>
                         ))}
                     </div>
+                )}
+                    </>
                 )}
             </div>
             <span className="crosshair -bottom-1.75 -left-1.75">+</span>

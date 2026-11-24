@@ -1,4 +1,10 @@
-function MarqueeSection({ images = [] }) {
+import { MarqueeSkeleton } from '../SkeletonBlueprint';
+
+function MarqueeSection({ images = [], isLoading = false }) {
+    if (isLoading) {
+        return <MarqueeSkeleton />;
+    }
+
     if (!images || images.length === 0) return null;
 
     return (

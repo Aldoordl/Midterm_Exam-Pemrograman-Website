@@ -13,7 +13,7 @@ function Navbar() {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <header className="sticky top-6 z-50 w-full px-4 flex justify-center pointer-events-none">
+        <header className="sticky top-3 z-50 w-full px-4 flex justify-center pointer-events-none">
             <nav className="pointer-events-auto bg-white/90 backdrop-blur-md border border-gray-200/80 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.06)] rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-2">
                 {/* Home */}
                 <Link
@@ -49,7 +49,7 @@ function Navbar() {
 
                 {/* X / Twitter */}
                 <a
-                    href="https://x.com"
+                    href="https://x.com/Aldoordl"
                     target="_blank"
                     rel="noreferrer"
                     className="p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors"
@@ -60,7 +60,7 @@ function Navbar() {
 
                 {/* GitHub */}
                 <a
-                    href="https://github.com"
+                    href="https://github.com/Aldoordl"
                     target="_blank"
                     rel="noreferrer"
                     className="p-2 rounded-full text-gray-600 hover:text-black hover:bg-gray-100 transition-colors"

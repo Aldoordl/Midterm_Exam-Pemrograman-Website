@@ -1,5 +1,11 @@
 // Centralized Mock Data & Fallbacks
 
+export const mockProfile = {
+    full_name: 'Arken',
+    role: 'Developer & Designer',
+    bio_text: 'Crafting seamless experiences and robust systems. Computer Science student by day, creative thinker and aspiring innovator by night.'
+};
+
 export const mockProjects = [
     {
         id: 'mock-1',
