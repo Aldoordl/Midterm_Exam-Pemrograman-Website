@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { projectService } from '../../services';
 import { IconEdit, IconTrash, IconFolder, IconFolderCheck } from '../Icons';
 import ConfirmModal from '../ConfirmModal';
 import AlertBanner from '../AlertBanner';
 import MarkdownRenderer from '../MarkdownRenderer';
+import MarkdownToolbar from './MarkdownToolbar';
+import MarkdownGuideModal from './MarkdownGuideModal';
 
 function ProjectsTab({ projects, token, onRefresh }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -12,6 +14,8 @@ function ProjectsTab({ projects, token, onRefresh }) {
     const [status, setStatus] = useState({ type: '', message: '' });
     const [deleteTargetId, setDeleteTargetId] = useState(null);
     const [contentTab, setContentTab] = useState('write'); // 'write' | 'preview'
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
+    const textareaRef = useRef(null);
 
     const initialFormState = {
         title: '',
@@ -29,6 +33,27 @@ function ProjectsTab({ projects, token, onRefresh }) {
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    };
+
+    const handleInsertFromGuide = (snippet) => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            const start = textarea.selectionStart ?? (formData.content || '').length;
+            const end = textarea.selectionEnd ?? (formData.content || '').length;
+            const currentVal = formData.content || '';
+            const nextVal = currentVal.substring(0, start) + snippet + currentVal.substring(end);
+            setFormData(prev => ({ ...prev, content: nextVal }));
+            setTimeout(() => {
+                textarea.focus();
+                textarea.setSelectionRange(start + snippet.length, start + snippet.length);
+            }, 10);
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                content: (prev.content ? prev.content + '\n\n' : '') + snippet
+            }));
+        }
+        setIsGuideOpen(false);
     };
 
     const handleEditClick = (proj) => {
@@ -272,14 +297,25 @@ function ProjectsTab({ projects, token, onRefresh }) {
                         </div>
 
                         {contentTab === 'write' ? (
-                            <textarea
-                                name="content"
-                                rows={6}
-                                value={formData.content}
-                                onChange={handleInputChange}
-                                placeholder="Write project story using Markdown (e.g. ## Overview, - Feature 1, **bold**, `code`)..."
-                                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 font-mono text-xs focus:border-black outline-none transition-all resize-y min-h-32"
-                            ></textarea>
+                            <div className="flex flex-col">
+                                <MarkdownToolbar
+                                    textareaRef={textareaRef}
+                                    content={formData.content}
+                                    onChange={(newContent) =>
+                                        setFormData((prev) => ({ ...prev, content: newContent }))
+                                    }
+                                    onOpenGuide={() => setIsGuideOpen(true)}
+                                />
+                                <textarea
+                                    ref={textareaRef}
+                                    name="content"
+                                    rows={6}
+                                    value={formData.content}
+                                    onChange={handleInputChange}
+                                    placeholder="Write project story using Markdown (e.g. ## Overview, - Feature 1, **bold**, `code`)..."
+                                    className="w-full px-3 py-2.5 rounded-b-lg border border-gray-200 font-mono text-xs focus:border-black outline-none transition-all resize-y min-h-32"
+                                ></textarea>
+                            </div>
                         ) : (
                             <div className="min-h-32 p-4 rounded-lg border border-dashed border-gray-200 bg-gray-50/50 max-h-96 overflow-y-auto">
                                 <MarkdownRenderer content={formData.content} />
@@ -367,6 +403,13 @@ function ProjectsTab({ projects, token, onRefresh }) {
                 message="Are you sure you want to delete this project? It will be permanently removed from your portfolio."
                 onConfirm={confirmDeleteProject}
                 onCancel={() => setDeleteTargetId(null)}
+            />
+
+            {/* Markdown Cheatsheet Guide Modal */}
+            <MarkdownGuideModal
+                isOpen={isGuideOpen}
+                onClose={() => setIsGuideOpen(false)}
+                onInsert={handleInsertFromGuide}
             />
         </div>
     );
